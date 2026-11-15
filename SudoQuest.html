@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SudoQuest – دليل ومسار إدارة الخوادم التفاعلي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script>
+(function() {
+  const stored = localStorage.getItem("sa_theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = stored || (prefersDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+<style>
+:root {
+  /* Warm Parchment Palette */
+  --bg: #fbf4ea;
+  --card: #f2ebe2;
+  --surface-inset: #e8e0d5;
+  --text: #000000;
+  --text-sec: #393939;
+  --muted: #525151;
+  --line: #dcd5cc;
+  --primary: #7a1f33;
+  --primary-hover: #5e1827;
+  --primary-text: #fcfcfd;
+  --ok: #115e3b;
+  --okbg: #dcf2e6;
+  --bad: #9e1c1c;
+  --badbg: #f9e1e1;
+  --gold: #b3821a;
+
+  /* Inverse Ground / Boss Banner */
+  --boss-bg: #141314;
+  --boss-surface: #1e1c1e;
+  --boss-text: #fcfcfd;
+  --boss-line: #332f33;
+
+  /* Typography */
+  --font-serif: "EB Garamond", "Tajawal", Georgia, serif;
+  --font-sans: "Host Grotesk", "Tajawal", system-ui, -apple-system, sans-serif;
+  --font-ar: "Tajawal", "Host Grotesk", system-ui, -apple-system, sans-serif;
+  --font-code: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", Menlo, Consolas, monospace;
+
+  /* Geometric rules */
+  --radius: 8px;
+  --sh: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --sh-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="dark"] {
+  --bg: #141314;
+  --card: #1e1c1e;
+  --surface-inset: #262326;
+  --text: #fcfcfd;
+  --text-sec: #dcd5cc;
+  --muted: #9e9a98;
+  --line: #332f33;
+  --primary: #942b42;
+  --primary-hover: #ad3751;
+  --primary-text: #fcfcfd;
+  --ok: #5ef0b0;
+  --okbg: #0d3a2c;
+  --bad: #ff9d94;
+  --badbg: #44201f;
+  --gold: #e5a93b;
+  --boss-bg: #0c0b0c;
+  --boss-surface: #181618;
+  --boss-text: #fcfcfd;
+  --boss-line: #2b272b;
+  --sh: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --sh-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141314;
+    --card: #1e1c1e;
+    --surface-inset: #262326;
+    --text: #fcfcfd;
+    --text-sec: #dcd5cc;
+    --muted: #9e9a98;
+    --line: #332f33;
+    --primary: #942b42;
+    --primary-hover: #ad3751;
+    --primary-text: #fcfcfd;
+    --ok: #5ef0b0;
+    --okbg: #0d3a2c;
+    --bad: #ff9d94;
+    --badbg: #44201f;
+    --gold: #e5a93b;
+    --boss-bg: #0c0b0c;
+    --boss-surface: #181618;
+    --boss-text: #fcfcfd;
+    --boss-line: #2b272b;
+    --sh: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --sh-hover: 0 6px 18px rgba(0, 0, 0, 0.5);
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ar);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Suppress legacy sci-fi animations and glowing floating objects */
+.bub, .rp, .fx {
+  display: none !important;
+}
+
+/* Header */
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  padding: 24px 24px 22px;
+  position: relative;
+  z-index: 10;
+  box-shadow: var(--sh);
+}
+
+.header-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-brand h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.header-badge {
+  font-family: var(--font-ar);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  letter-spacing: 0.2px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface-inset);
+  border: 1px solid var(--line);
+  color: var(--text-sec);
+  padding: 7px 16px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  min-height: 38px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--surface-inset);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+.theme-toggle .icon-moon {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+header p {
+  margin: 10px 0 0;
+  font-family: var(--font-ar);
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Main Container */
+main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Lectures Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 20px;
+}
+
+.lec {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: right;
+  font: inherit;
+  color: inherit;
+  min-height: 48px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--sh);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.lec:hover,
+.lec:focus-visible {
+  border-color: var(--primary);
+  box-shadow: var(--sh-hover);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.lec:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.lec > .art {
+  flex: 0 0 100%;
+  height: 112px;
+  color: var(--primary);
+  background: var(--surface-inset);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.art svg {
+  height: 74%;
+  width: auto;
+  max-width: 88%;
+}
+
+.lec > .ring {
+  margin: 0 0 16px;
+  margin-inline-start: 16px;
+}
+
+.ring {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: conic-gradient(var(--primary) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.6s ease;
+}
+
+.ring .badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: none;
+}
+
+.lec > div:last-child {
+  padding: 0 0 16px;
+  padding-inline-end: 16px;
+  padding-inline-start: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.lec b {
+  display: block;
+  font-family: var(--font-ar);
+  font-size: 17.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.lec span {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  direction: ltr;
+  text-align: right;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.lec small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-sec);
+  font-family: var(--font-ar);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mini {
+  display: block;
+  height: 4px;
+  background: var(--line);
+  border-radius: 4px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.mini b {
+  display: block;
+  height: 100%;
+  background: var(--primary) !important;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Mixed Challenge Card (.boss) */
+.boss {
+  grid-column: 1 / -1;
+  background: var(--boss-bg);
+  border-color: var(--boss-line);
+  color: var(--boss-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.boss:hover,
+.boss:focus-visible {
+  border-color: var(--gold);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+.boss:focus-visible {
+  outline: 2px solid var(--gold);
+}
+
+.boss .art {
+  background: var(--boss-surface);
+  border-bottom: 1px solid var(--boss-line);
+  color: var(--gold);
+}
+
+.boss .ring {
+  background: conic-gradient(var(--gold) calc(var(--p, 100) * 1%), var(--boss-line) 0);
+}
+
+.boss .ring .badge {
+  background: var(--boss-surface);
+  color: var(--gold);
+  border-color: var(--boss-line);
+}
+
+.boss b {
+  color: var(--boss-text);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  letter-spacing: -0.2px;
+}
+
+.boss span {
+  color: #dcd5cc;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.boss small {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.boss .mini b {
+  background: var(--gold) !important;
+}
+
+/* Active Quiz / Flashcard View (.q) */
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: var(--primary);
+  color: var(--primary-text);
+  border-radius: var(--radius);
+  padding: 6px 14px;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.link {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text-sec);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: manipulation;
+}
+
+.link:hover,
+.link:focus-visible {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--surface-inset);
+  outline: none;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.mid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.qr {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  background: conic-gradient(var(--primary) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.6s ease;
+}
+
+.qr::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--card);
+  z-index: -1;
+}
+
+.qr span {
+  color: var(--text);
+}
+
+.qr.er {
+  background: conic-gradient(var(--bad) calc(var(--p, 0) * 1%), var(--line) 0);
+}
+
+.qr.er span {
+  color: var(--bad);
+  font-weight: 700;
+}
+
+.sc {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 4px 12px;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.sc.fire {
+  background: #fff8f0;
+  border-color: #e5a93b;
+  color: #9c5c06;
+}
+
+[data-theme="dark"] .sc.fire {
+  background: #2b1d0d;
+  border-color: #a15d07;
+  color: #f5b759;
+}
+
+.prog {
+  height: 6px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.prog i {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+
+.q {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px 26px;
+  box-shadow: var(--sh);
+}
+
+.q .kind {
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.q h2 {
+  margin: 0 0 22px;
+  font-family: var(--font-sans);
+  font-size: 20px;
+  direction: ltr;
+  text-align: left;
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+#opts {
+  counter-reset: o;
+}
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow-wrap: anywhere;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.opt::before {
+  counter-increment: o;
+  content: counter(o, upper-alpha);
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--surface-inset);
+  color: var(--text-sec);
+  border: 1px solid var(--line);
+  transition: all 0.15s ease;
+}
+
+.opt:hover:not(:disabled) {
+  background: var(--card);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.opt:hover:not(:disabled)::before {
+  background: var(--primary);
+  color: var(--primary-text);
+  border-color: var(--primary);
+}
+
+.opt:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.opt:disabled {
+  cursor: default;
+}
+
+.opt.ok {
+  background: var(--okbg) !important;
+  border-color: var(--ok) !important;
+  color: var(--ok) !important;
+  font-weight: 700;
+}
+
+.opt.ok::before {
+  content: "✓";
+  background: var(--ok) !important;
+  color: #fff !important;
+  border-color: var(--ok) !important;
+}
+
+.opt.bad {
+  background: var(--badbg) !important;
+  border-color: var(--bad) !important;
+  color: var(--bad) !important;
+  font-weight: 700;
+}
+
+.opt.bad::before {
+  content: "✕";
+  background: var(--bad) !important;
+  color: #fff !important;
+  border-color: var(--bad) !important;
+}
+
+.tf {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tf .opt {
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  font-weight: 700;
+  font-size: 16.5px;
+}
+
+.tf .opt::before {
+  display: none;
+}
+
+.fb {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid transparent;
+}
+
+.fb.ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.fb.bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.fb em {
+  display: block;
+  font-style: normal;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  direction: ltr;
+  text-align: left;
+  margin-top: 6px;
+  font-size: 14.5px;
+  opacity: 0.95;
+}
+
+#ans-box {
+  background: var(--card) !important;
+  border: 1px solid var(--line) !important;
+  border-inline-start: 4px solid var(--primary) !important;
+  border-inline-end: 1px solid var(--line) !important;
+  color: var(--text) !important;
+  border-radius: var(--radius) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  background: var(--primary);
+  color: var(--primary-text);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 16px;
+  padding: 12px 28px;
+  min-height: 48px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn.alt {
+  background: var(--surface-inset);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.btn.alt:hover {
+  background: var(--card);
+  border-color: var(--text-sec);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Results & Review View (.res) */
+.res {
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 38px 24px;
+  box-shadow: var(--sh);
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.res > div:first-child {
+  font-family: var(--font-ar);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.rank {
+  font-family: var(--font-ar);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 12px 0 20px;
+}
+
+.rank b {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--primary);
+  margin: 0 6px;
+}
+
+.rank small {
+  display: block;
+  font-family: var(--font-ar);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.rings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 6vw, 44px);
+  margin: 24px 0 20px;
+  flex-wrap: wrap;
+}
+
+.rings figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rings figcaption {
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-sec);
+  margin-top: 10px;
+}
+
+.res .n {
+  width: clamp(100px, 28vw, 128px);
+  height: clamp(100px, 28vw, 128px);
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 6vw, 36px);
+  font-weight: 700;
+  color: var(--ok);
+  position: relative;
+  isolation: isolate;
+  background: conic-gradient(var(--ok) calc(var(--p, 0) * 1%), var(--line) 0);
+  transition: background 0.8s ease;
+}
+
+.res .n::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--card);
+  z-index: -1;
+}
+
+.res .n2 {
+  background: conic-gradient(var(--bad) calc(var(--p, 0) * 1%), var(--line) 0) !important;
+  color: var(--bad) !important;
+}
+
+.res p {
+  font-family: var(--font-ar);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 16px 0 24px;
+  line-height: 1.5;
+}
+
+.rev {
+  margin-top: 32px;
+  text-align: right;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+
+.rev div {
+  direction: ltr;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1px solid transparent;
+  overflow-wrap: anywhere;
+}
+
+.rev .ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.rev .bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+/* Mobile & Accessibility */
+@media (max-width: 640px) {
+  header {
+    padding: 20px 16px 18px;
+  }
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .header-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+  main {
+    padding: 20px 16px 48px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .q {
+    padding: 20px 16px;
+  }
+  .q h2 {
+    font-size: 18px;
+  }
+  .opt {
+    padding: 11px 14px;
+    font-size: 15px;
+  }
+  .tf {
+    grid-template-columns: 1fr;
+  }
+  .btn {
+    width: 100%;
+  }
+  .res .btn {
+    width: 100%;
+    margin: 6px 0;
+  }
+  .lec > .art {
+    height: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Question Number Strip */
+.q-strip-wrap {
+  margin-bottom: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px 10px;
+  box-shadow: var(--sh);
+}
+
+.q-strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: var(--font-ar);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.q-strip-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.q-strip-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-sec);
+}
+
+.q-strip-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.q-strip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 8px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.q-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.q-strip::-webkit-scrollbar-track {
+  background: var(--surface-inset);
+  border-radius: 3px;
+}
+
+.q-strip::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+
+.q-strip::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.q-pill {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--surface-inset);
+  color: var(--text-sec);
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+}
+
+.q-pill:hover:not(.active) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--card);
+}
+
+.q-pill:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Current active question */
+.q-pill.active {
+  background: #7a1f33 !important;
+  color: #fcfcfd !important;
+  border-color: #7a1f33 !important;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #7a1f33;
+  transform: translateY(-1px) scale(1.05);
+  font-weight: 800;
+  z-index: 2;
+}
+
+[data-theme="dark"] .q-pill.active {
+  background: #942b42 !important;
+  border-color: #942b42 !important;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #942b42;
+}
+
+/* Answered correctly */
+.q-pill.ok {
+  background: var(--okbg);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+/* Answered incorrectly */
+.q-pill.bad {
+  background: var(--badbg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+/* Peeked / Revealed */
+.q-pill.peeked {
+  background: var(--surface-inset);
+  color: var(--gold);
+  border-color: var(--gold);
+  border-style: dashed;
+}
+
+/* Card Header with Peek Button */
+.q-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-peek {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-inset);
+  border: 1px dashed var(--line);
+  color: var(--text-sec);
+  border-radius: var(--radius);
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 5px 12px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+  min-height: 32px;
+}
+
+.btn-peek:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--card);
+}
+
+.btn-peek:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Bottom Persistent Navigation */
+.q-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.q-nav .btn {
+  margin-top: 0;
+  flex: 1 1 140px;
+  min-height: 46px;
+  padding: 10px 20px;
+  font-size: 15.5px;
+}
+
+.q-nav-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ar);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+@media (max-width: 640px) {
+  .q-nav {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .q-nav .btn {
+    width: 100%;
+    flex: none;
+  }
+  .q-nav-info {
+    order: -1;
+    margin-bottom: 4px;
+  }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-wrap">
+    <div class="header-row">
+      <div class="header-brand">
+        <h1>SudoQuest</h1>
+        <span class="header-badge">دليل إدارة الخوادم</span>
+      </div>
+      <div class="header-meta">
+        <span class="chip" id="cnt"></span>
+        <button id="tgl" class="theme-toggle" type="button" aria-label="تبديل المظهر">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span class="theme-label">المظهر</span>
+        </button>
+      </div>
+    </div>
+    <p>دليل ومسار تدريبي تفاعلي لمهارات إدارة الخوادم · اكسب صلاحيات root محاضرة بعد محاضرة</p>
+  </div>
+</header>
+<main id="app"></main>
+<script>
+const M=(q,o,a)=>({q,o,a}),T=(q,a)=>({q,o:["True","False"],a:a?0:1,tf:1});
+const L=[
+{n:"المحاضرة الأولى",s:"Introduction to Server Administration",q:[
+M("What are the main goals of a Server Administrator?",["Health, performance, and security of servers and services","Designing company logos","Only purchasing hardware","Writing marketing content"],0),
+T("Network Administration focuses on the services and data on individual servers, while Server Administration focuses on connectivity paths.",false),
+M("In the BloomTech story, how was the constantly crashing desktop-grade machine fixed?",["Clean Ubuntu Server LTS installation","Adding more monitors","Installing Windows 7","Replacing the router"],0),
+M("Why did the admin set up an OpenLDAP server?",["To host the website","To be the central directory service so users avoid separate passwords","To send emails","To clone disks"],1),
+M("Which server was added so Windows marketing teams could reach Linux file shares?",["Nginx","PostgreSQL","Samba","OpenLDAP"],2),
+M("What was Nginx with virtual hosts used for?",["Managing multiple websites on one web server","Storing backups","Monitoring CPU","Assigning IP addresses"],0),
+T("Linux server requires Client Access Licenses (CALs), while Windows server is free.",false),
+M("Which question best describes Network Administration?",["Is the database slow?","Can the clients reach the server in the first place?","Is the RAID healthy?","Is the OS patched?"],1),
+]},
+{n:"المحاضرة الثانية",s:"RAID and LVM",q:[
+M("Which RAID level offers striping with NO redundancy?",["RAID 0","RAID 1","RAID 5","RAID 6"],0),
+T("RAID 1 (mirroring) wastes about 50% of disk space.",true),
+M("What is the minimum number of disks for RAID 5?",["2","3","4","8"],1),
+T("RAID 5 can survive two simultaneous disk failures.",false),
+M("RAID 6 uses double parity. How many simultaneous disk failures can it survive?",["0","1","2","3"],2),
+M("RAID 10 is a combination of:",["RAID 0 + RAID 1","RAID 1 + RAID 5","RAID 5 + RAID 6","RAID 0 + RAID 6"],0),
+T("Software RAID gives low performance but costs less and is easy to support.",true),
+M("In the LVM LEGO analogy, what does the Volume Group (VG) represent?",["Individual bricks","The base plate (storage pool)","The finished buildings","The cables"],1),
+M("Which is an example of a Physical Volume (PV)?",["lv-root","vg-ubuntu","/dev/sda1","lv-home"],2),
+T("LVM can grow or shrink volumes without reformatting.",true),
+M("Which is an LVM feature mentioned in the lecture?",["Snapshots and thin provisioning","Printing documents","Email routing","DNS caching"],0),
+M("What is the correct hierarchical order of LVM storage layers from base physical hardware up to the usable filesystem?",["Physical Volume (PV) → Volume Group (VG) → Logical Volume (LV)", "Logical Volume (LV) → Physical Volume (PV) → Volume Group (VG)", "Volume Group (VG) → Logical Volume (LV) → Physical Volume (PV)", "Physical Volume (PV) → Logical Volume (LV) → Volume Group (VG)"],0)]},
+{n:"المحاضرة الثالثة",s:"Filesystems, Directory Structure and NIC Bonding",q:[
+M("Which filesystem is the default general-purpose choice with journaling?",["XFS","Ext4","Swap","NTFS"],1),
+M("XFS is best suited for:",["Tiny files only","Large files and high-throughput workloads","Printing","Boot menus"],1),
+T("Swap is a traditional filesystem used to store user files.",false),
+M("What does iSCSI do?",["Encrypts SSH","Lets a computer use drives over the network as if local","Boots the OS","Assigns IPs"],1),
+M("Which command checks the RAID status?",["cat /proc/mdstat","sudo vgs","df -h","swapon"],0),
+M("Which directory holds system configuration files?",["/bin","/etc","/dev","/lib"],1),
+M("Which directory is a virtual filesystem showing running processes?",["/var","/home","/proc","/boot"],2),
+M("Log files, databases and website content mostly live in:",["/var","/root","/sbin","/dev"],0),
+T("/sbin contains essential system administration binaries used by root.",true),
+M("Which command lists the LVM logical volumes?",["sudo pvs","sudo vgs","sudo lvs","lsblk"],2),
+M("Which bonding mode keeps one NIC active and another as a backup?",["mode 0","mode 1 (active-backup)","mode 3","mode 4"],1),
+M("Which bonding mode needs a switch that supports LACP?",["mode 2","mode 4 (802.3ad)","mode 5","mode 6"],1),
+T("After modprobe bonding, adding bonding to /etc/modules makes it persistent after reboot.",true),
+M("Which command verifies the bond status?",["cat /proc/net/bonding/bond0","ip link show","ls /dev","lsmod"],0),
+T("The /boot directory contains user personal files and documents.",false),
+T("Swap space extends available memory and prevents out-of-memory crashes by moving inactive memory pages to disk.",true),
+T("The command 'sudo vgs' is used to check the status of Linux software RAID arrays.",false),
+M("Which Linux command displays network interface operational status (UP/DOWN) and MAC addresses without listing IP addresses?",["ip link show", "cat /proc/mdstat", "sudo pvs", "df -h"],0)]},
+{n:"المحاضرة الرابعة",s:"Clonezilla Server: Concepts and Architecture",q:[
+M("What is Clonezilla?",["Open-source disk imaging and cloning tool","A web server","A mail server","A firewall"],0),
+T("Clonezilla is a proprietary paid tool just like Norton Ghost.",false),
+M("What does cloning do in Clonezilla?",["Copies one disk to another bit-by-bit without an intermediate image","Only compresses files","Installs updates","Creates users"],0),
+M("How does Clonezilla Server Edition deploy images to many clients at once?",["Over PXE / network boot (multicast/unicast)","With USB sticks only","Using email","By hand"],0),
+M("What does DRBL stand for?",["Diskless Remote Boot in Linux","Disk Redundant Backup Layer","Dynamic Remote Block Loader","Direct RAID Boot Level"],0),
+M("Which service gives clients IP addresses during PXE boot?",["TFTP","NFS","DHCP","SSH"],2),
+M("Which service transfers the small boot files (pxelinux.0, initrd.img)?",["TFTP","NFS","DNS","UFW"],0),
+M("What is the role of NFS in the Clonezilla setup?",["Shares image storage and the Clonezilla Live environment","Assigns IPs","Resolves names","Encrypts disks"],0),
+T("Clonezilla Live runs entirely in the client's RAM with no local installation.",true),
+M("What is the correct network order for a PXE client?",["NFS, TFTP, DHCP","DHCP, TFTP, then NFS","TFTP, DHCP, NFS","DNS, SSH, NFS"],1),
+M("Which is a benefit of storing user copies on the server?",["Centralized management and quick disaster recovery","Slower restores","Higher licensing cost","No backups needed"],0),
+T("DRBL Server manages network booting for multiple clients and serves as the centralized deployment point.",true)]},
+{n:"المحاضرة الخامسة",s:"Clonezilla Server Installation",q:[
+M("What is the Clonezilla server IP in the lab design?",["192.168.221.10","192.168.221.101","192.168.134.1","10.0.0.1"],0),
+M("What DHCP range is given to the Windows VM clients?",["192.168.221.1-10","192.168.221.101-150","192.168.221.200-250","192.168.0.100-110"],1),
+T("The VMware NAT network in the lecture is 192.168.221.0/24.",true),
+M("Which command applies the new netplan network configuration?",["sudo netplan apply","sudo apt update","sudo ufw enable","sudo drblpush"],0),
+M("Which directory is created to store the images?",["/home/partimag","/var/www","/etc/drbl","/mnt/win"],0),
+M("What does drblsrv -i do?",["Installs DRBL core and dependencies","Generates the PXE environment","Opens the firewall","Restarts DNS"],0),
+M("What does drblpush -i do?",["Updates Ubuntu","Generates the PXE environment and activates the DRBL server","Creates Samba users","Installs BIND"],1),
+M("What is BIND?",["A DHCP client","The DNS server software on Linux","A firewall","A disk cloning tool"],1),
+M("UFW port 2049 is opened for which service?",["DHCP","TFTP","NFS","DNS"],2),
+T("The firewall step opens ports 67/udp and 69/udp for DHCP and TFTP.",true),
+M("Which command checks the DHCP service status?",["sudo systemctl status isc-dhcp-server","sudo apt install ufw","ls -la /home","nslookup"],0),
+T("The 'wget' command is an interactive downloader that requires user GUI interaction to retrieve files from web servers.",false),
+T("The Clonezilla server does not require DNS services for its operation.",false),
+T("BIND9 is a lightweight command-line tool used solely for testing whether DNS is working.",false),
+M("What does the directive 'dhcp4: no' signify in an Ubuntu Netplan network configuration file?",["Do not use DHCP; use a static IPv4 address instead", "Disable the network adapter completely", "Enable DHCP exclusively for IPv6", "Block all incoming IPv4 network packets"],0)]},
+{n:"المحاضرة السادسة",s:"Windows Client with Clonezilla, then Samba Server",q:[
+T("You must install Clonezilla on the Windows 10 client VM.",false),
+M("Which network adapter mode must the client VM use?",["Host-only","NAT, the same as the server","Bridged to Wi-Fi only","Disabled"],1),
+M("Which Clonezilla action saves the whole client disk as an image to the server?",["restoredisk","savedisk","saveparts","rawdisk"],1),
+T("restoredisk erases all data on the target disk.",true),
+M("Which Windows file-sharing protocol does Samba use?",["NFS","SMB/CIFS","FTP only","iSCSI"],1),
+M("Which Samba daemon handles file and printer sharing and authentication?",["smbd","nmbd","winbindd","dhcpd"],0),
+M("Which daemon provides NetBIOS name resolution?",["smbd","nmbd","winbindd","named"],1),
+M("What is the main Samba configuration file?",["/etc/samba/smb.conf","/etc/dhcp/dhcpd.conf","/etc/bind/named.conf","/etc/fstab"],0),
+M("Which ports does Samba use?",["139 and 445 TCP, 137 and 138 UDP","22 and 80","53 and 67","2049 and 111 only"],0),
+T("A Samba user uses the same password as the Linux login, so no extra step is needed.",false),
+M("Which command adds a user to the Samba database?",["adduser","sudo smbpasswd -a user1","chmod 777","testparm"],1),
+M("Which security mode is the default and requires username and password?",["security = share","security = user","security = server","security = none"],1),
+M("What does the log variable %m represent?",["Client machine name","Client IP","Username","Samba version"],0),
+M("Which command checks smb.conf for errors?",["sudo testparm","sudo ufw allow samba","smbclient","ping"],0)]}
+];
+const X=(i,a)=>L[i].q.push(...a);
+X(0,[
+M("Which responsibility covers setting up server hardware and installing the OS?",["Installation & Configuration","Patching","Storage Management","Backup"],0),
+M("Monitoring CPU, memory, disk and application performance is:",["Performance Monitoring","User Management","Patching","Service Management"],0),
+M("Implementing and testing backups so data can be restored after failure is:",["Backup and Disaster Recovery","Patching & Updates","Storage Management","Installation"],0),
+M("Keeping the OS and apps up to date with security patches is:",["Patching & Updates","Monitoring","Service Management","Access Management"],0),
+M("Creating user accounts, groups and permissions is:",["User & Access Management","Storage Management","Service Management","Monitoring"],0),
+M("Which is an example of Service Management?",["Maintaining Active Directory, mail, SQL, Apache/IIS, file shares","Replacing a hard drive","Cabling a switch","Writing RAID levels"],0),
+M("Managing hard drives, RAID arrays and SAN is:",["Storage Management","Patching","Backup","Network Administration"],0),
+M("The CRM (Salesforce) was slow. What did the admin do?",["Installed performance monitoring tools","Reinstalled Windows","Bought a new CRM","Added a printer"],0),
+M("Which server fixed inconsistent emails and unreliable sensor alerts?",["Mail server","Web server","Samba","LDAP"],0),
+M("Which database server did BloomTech set up?",["PostgreSQL","Access","Excel","SQLite on a laptop"],0),
+M("Typical devices of Network Administration:",["Routers, switches, firewalls, wireless APs","Servers and SAN","Hypervisors","Storage arrays"],0),
+M("Key technologies of Server Administration:",["Windows Server, Linux, Active Directory, VMware, SQL Server, Exchange","BGP, OSPF, VLANs","Cisco IOS","VPN only"],0),
+M("Key technologies of Network Administration:",["TCP/IP, DNS, DHCP, BGP, OSPF, VLANs, VPN, Cisco IOS","Active Directory","SQL Server","Exchange"],0),
+M("Which troubleshooting case fits a Server Admin?",["The database is slow: check RAM, CPU, queries","Can't connect to DB: check firewall, routing, physical link","Switch port down","Cable cut"],0),
+T("The core domain of Server Admin is the connections between all computers.",false),
+T("Server Administration's key question: Is the service/application running and accessible?",true),
+M("Linux vs Windows (cost):",["Linux is open-source and free; Windows needs CALs","Both need CALs","Linux needs CALs","Both are free"],0),
+M("Which is famous for rock-solid stability and fewer reboots?",["Linux","Windows","Both equal","Neither"],0),
+T("Windows requires more CPU, RAM and disk space than Linux.",true),
+M("Software installation on Linux uses:",["Centralized package managers","Manual downloaded installers","USB only","Registry"],0),
+M("The BloomTech OpenLDAP server stands for:",["Lightweight Directory Access Protocol","Open Link Data Access Panel","Local Disk Allocation Protocol","Linux Data Access Policy"],0)]);
+X(1,[
+M("Why do admins rely on RAID and LVM?",["They reduce downtime and protect data, saving money","They brighten screens","They replace the OS","They block viruses"],0),
+M("RAID is a method for:",["Combining partitions on different disks into one large virtual device","Splitting disks into folders","Encrypting email","Cloning PCs"],0),
+M("LVM offers:",["Flexibility, scalability and reliability for storage devices","Network routing","Printing","Mail delivery"],0),
+M("Software-based RAID is:",["Low performance, low cost, easy support","High performance, expensive","Impossible on Linux","Faster than hardware RAID"],0),
+M("RAID 0 works by:",["Splitting data evenly across 2+ disks","Copying data to every disk","Parity on 3 disks","Two parity blocks"],0),
+T("RAID 0 gives about double speed and 100% usable space.",true),
+T("RAID 0 is recommended for important data.",false),
+M("RAID 1 works by:",["Writing the same data to 2+ disks (full copy on each)","Striping data","Double parity","Striped mirrors"],0),
+T("RAID 1 has fast reads but slower writes.",true),
+M("RAID 5 is described as:",["Balance of space and safety (striping with parity)","Maximum speed, no safety","Maximum safety, no extra space","Mirrored stripes"],0),
+T("In RAID 5 the parity information is distributed across the disks.",true),
+M("A RAID 5 downside:",["Slow writes and risk during rebuild","No read performance","Needs 8 disks","Wastes 50%"],0),
+M("RAID 6 is good for:",["Large arrays (8+ disks)","A single disk","Swap","Two-disk mirror"],0),
+M("RAID 6 space overhead:",["N-2","N-1","N/2","None"],0),
+T("RAID 6 has slower writes than RAID 5.",true),
+M("RAID 10 data is:",["Striped across mirrored pairs","Mirrored across parity","A single copy","Parity only"],0),
+M("Why RAID boosts performance:",["Reads and writes run in parallel across drives","Disks become cheaper","Backups disappear","It encrypts data"],0),
+M("Fault tolerance in RAID means:",["If one drive fails the system keeps running without data loss","Drives never fail","Faster boot","No power use"],0),
+T("RAID lets admins add drives to expand storage without taking the system offline.",true),
+T("RAID can extend drive lifespan by distributing the workload.",true),
+M("A Physical Volume (PV) in the LEGO analogy:",["Individual bricks (real drives or partitions)","The base plate","The buildings","The box"],0),
+M("A Logical Volume (LV) is:",["A flexible partition created from the Volume Group","A real disk","A pool of PVs","A partition table"],0),
+M("LV examples:",["lv-root, lv-home, lv-swap","/dev/sda1","/dev/sdb","vg-ubuntu"],0),
+M("LVM online data migration means:",["Moving data to newer/faster devices while the system stays active","Cloud backup","Rebooting to move data","Formatting"],0),
+M("LVM striped volumes can:",["Increase throughput or give RAID-like redundancy","Block ports","Send email","Compress logs"],0),
+T("Thin-provisioned volumes can be larger than the available physical space.",true),
+M("LVM snapshots are used for:",["Point-in-time copies for backups or testing","Faster CPUs","Screen capture","Firewall rules"],0),
+M("In the LVM diagram, which layer sits between PV and LV?",["Volume Group","File system","Partition","Hard drive"],0)]);
+X(2,[
+M("Ext4 supports files up to:",["16 terabytes","1 gigabyte","1 exbibyte","2 terabytes"],0),
+T("Ext4 file systems can reach up to 1 exbibyte and includes journaling.",true),
+M("Swap space provides:",["Virtual memory when RAM is full and enables hibernation","Faster SSDs","User logins","Backups"],0),
+M("What does OpenSSH let you do?",["Securely control the server from another computer over the network","Mount iSCSI","Boot GRUB","Create RAID"],0),
+M("GRUB is the:",["Bootloader that starts the OS at power on","Firewall","File system","Mail server"],0),
+M("Which command shows details of the RAID device md0?",["sudo mdadm --detail /dev/md0","sudo pvs","df -h","lsmod"],0),
+M("Which command lists the LVM physical volumes?",["sudo pvs","sudo vgs","sudo lvs","swapon --show"],0),
+M("Which command lists the volume groups?",["sudo vgs","sudo pvs","sudo lvs","lsblk"],0),
+M("Which commands check file systems and mounts?",["df -h and lsblk","pvs and vgs","modprobe","ping"],0),
+M("Which command checks swap?",["sudo swapon --show","cat /proc/mdstat","lvs","ip link"],0),
+M("The root directory / is like (Windows):",["Drive C or D","system32","C:\\users","Task manager"],0),
+M("/bin contains:",["Essential executable binaries (cp, mv, basic commands)","Logs","Device files","Home folders"],0),
+M("/boot contains:",["Kernel images, initial RAM disk, GRUB files","User files","Logs","Libraries"],0),
+M("/dev contains:",["Device files for hard drives, USB, terminals","Config files","Logs","Root home"],0),
+M("/etc is like (Windows):",["system32\\drivers (configuration)","C:\\users","Logs","Temp"],0),
+M("/home/username holds:",["The user's personal files and settings (like C:\\users)","System binaries","Kernel","Logs"],0),
+M("/lib contains:",["Shared libraries and kernel modules","Admin tools","Logs","Devices"],0),
+M("/root is:",["The home directory of the root user","The top of the filesystem","Config files","Temp files"],0),
+M("/proc is compared to:",["Task manager + performance monitor","system32","C:\\users","Logs"],0),
+M("/sbin is used for:",["Disk partitioning, network config, firewall by root","User documents","Websites","Mounts"],0),
+M("/var is compared to:",["windows\\logs + windows\\temp","C:\\users","system32","Boot manager"],0),
+M("NIC bonding Step 1 is:",["List interfaces with ip link show","Restart networking","Edit interfaces file","Install ifenslave"],0),
+M("ifenslave is installed to:",["Configure network interfaces for parallel routing (bonding)","Mount RAID","Create swap","Run GRUB"],0),
+M("Which command checks the bonding module is loaded?",["lsmod | grep bonding","cat /proc/mdstat","sudo lvs","df -h"],0),
+M("The bonding config file in the lecture is:",["/etc/network/interfaces","/etc/samba/smb.conf","/etc/bind/named.conf","/etc/fstab"],0),
+M("In the config, slave NICs ens33/ens34 are set as:",["iface ... inet manual with bond-master bond0","static with IPs","dhcp each","loopback"],0),
+M("bond0 in the lecture example uses mode:",["active-backup with bond-miimon 100","balance-rr","802.3ad","broadcast"],0),
+M("Mode 0 (balance-rr):",["Round-robin packets across NICs: load balancing + redundancy","One active NIC","Needs LACP","Broadcast"],0),
+M("Mode 2 (balance-xor):",["Hash-based (MAC/IP) per destination; complex setup","Round-robin","Active-backup","LACP"],0),
+M("Mode 3 (broadcast):",["Sends packets on all interfaces at once, specialized use","Load balancing","Passive backup","LACP"],0),
+M("Mode 5 (balance-tlb):",["Adaptive transmit load balancing, no switch changes","Needs LACP","Broadcast","Active-backup"],0),
+M("Mode 6 (balance-alb):",["Balances transmit and receive, no switch changes","Transmit only","Needs LACP","Round-robin"],0),
+T("active-backup provides fault tolerance but no performance gain.",true),
+M("Step 5 restarts networking with:",["sudo systemctl restart systemd-networkd (or reboot)","ufw enable","drblpush","testparm"],0),
+M("Which command tests connectivity after bonding?",["ping -c 4 8.8.8.8","mdadm","lvs","swapon"],0)]);
+X(3,[
+M("Clonezilla images can be used to:",["Restore a system, deploy identical setups, or migrate data","Edit video","Send email","Run websites"],0),
+M("On Ubuntu Server Clonezilla helps to:",["Automate and centralize backup management","Host websites","Authenticate users","Route packets"],0),
+M("Imaging means:",["Creating a compressed image of a disk or partition","Copying disk to disk","Formatting","Mounting"],0),
+M("Example of imaging in the lecture:",["/dev/sda1 into a single image file stored on the server","/home into a USB","RAM to disk","/proc to /var"],0),
+T("Clonezilla is free and highly customizable.",true),
+M("Backup images are stored in a dedicated directory such as:",["/srv/clonezilla/images/","/etc/passwd","/proc","/boot"],0),
+M("Which is a mass deployment benefit?",["Standard OS setup to many computers at once, saving manual work","Slower setup","More licenses","No network needed"],0),
+M("Which is a centralized management benefit?",["Version control, scheduled backups, easier restoration","Random backups","No logs","More RAM"],0),
+M("Data security in the Clonezilla server includes:",["RAID/secure storage, snapshot policies, admin-only restore","Open access","No policies","Guest restore"],0),
+M("Cost efficiency comes from:",["Open-source with no licensing costs","Paid licenses","Special hardware","Subscription"],0),
+M("DRBL's role:",["Manages network booting for many clients and coordinates imaging","Only DNS","Only file sharing","Firewall"],0),
+M("NFS in this setup:",["Shares image storage, serves Clonezilla Live, handles permissions","Assigns IPs","Transfers boot loaders","Resolves names"],0),
+M("TFTP in this setup:",["Transfers small boot files (PXE loader, initial ramdisk)","Shares images","Assigns IPs","Encrypts"],0),
+M("DHCP in this setup:",["Assigns IPs, gives network config, points clients to TFTP","Stores images","Transfers kernels","Compresses disks"],0),
+M("PXE stands for:",["Preboot Execution Environment","Private Xfer Engine","Packet Exchange Extension","Primary Exec Entry"],0),
+M("PXE boot:",["Boots from the network instead of the local drive","Boots from USB only","Formats the disk","Updates BIOS"],0),
+M("Clonezilla Live environment provides:",["Disk imaging interface, menu-driven cloning, partitioning tools","Web hosting","Mail","Directory service"],0),
+M("Image transfer SEND means:",["Creates a disk image backup to server storage","Restores image to local drive","Deletes images","Formats"],0),
+M("Image transfer RECEIVE means:",["Restores a disk image from server to local drive","Saves to server","Mounts NFS","Compresses"],0),
+T("Image transfer verifies data integrity and compresses/decompresses disk data.",true),
+M("Architecture: the server runs ... and the client is a ...",["DRBL + DHCP/TFTP/NFS; Windows client PC","Samba; Linux client","Nginx; Mac","LDAP; phone"],0),
+M("Boot phase step b:",["DHCP gives the client its IP and TFTP server address","Client mounts NFS","User starts backup","TFTP sends image"],0),
+M("Boot phase step d:",["TFTP sends pxelinux.0 and initrd.img","DHCP assigns IP","NFS reads image","Client logs in"],0),
+M("Operation phase: Clonezilla to NFS means:",["Read/write disk image data","Request IP","Boot files","Compress logs"],0),
+M("Disaster recovery benefit:",["Quickly restore a crashed user's system image, minimizing downtime","Prevents all crashes","Slow restores","Deletes data"],0)]);
+X(4,[
+M("The Clonezilla server provides which services?",["DHCP, TFTP, DNS","Samba, LDAP, Mail","Nginx, PostgreSQL","SSH only"],0),
+M("The Windows VM client gets IPs in:",["192.168.221.101-150, then PXE boot to Clonezilla menu","192.168.0.1","10.0.0.50","Static only"],0),
+M("Where do you set the NAT network?",["VM > Edit > Virtual Network Editor","BIOS","Windows registry","GRUB"],0),
+M("DNS servers set in NAT settings:",["8.8.8.8 preferred and 8.8.4.4 alternate","1.1.1.1 only","None","127.0.0.1"],0),
+M("NAT gateway IP in the lecture:",["192.168.221.1","192.168.221.10","192.168.134.10","8.8.8.8"],0),
+M("DHCP settings default lease / max lease time:",["30 minutes / 2 hours","1 day / 7 days","1 hour / 1 day","5 min / 10 min"],0),
+M("Step 1 post-installation commands:",["apt update && upgrade, then install net-tools curl wget","drblpush -i","ufw enable","netplan apply"],0),
+M("net-tools provides:",["ifconfig, hostname, route, netstat","Downloading files","DNS server","Firewall"],0),
+M("curl is:",["Command-line data transfer tool (HTTP, HTTPS, FTP)","Non-interactive downloader only","Firewall","DNS"],0),
+M("wget is:",["Non-interactive file downloader from web servers","Network editor","Firewall","Disk tool"],0),
+M("Step 2 edits the IP in:",["/etc/netplan/00-installer-config.yaml","/etc/hosts","/etc/bind/named.conf","/etc/fstab"],0),
+M("Step 3 installs which packages?",["drbl clonezilla partclone ntfs-3g","samba nginx","bind9 ufw","ldap mail"],0),
+M("Why add the GPG-KEY-DRBL and repository?",["To install DRBL packages from its repository","To enable SSH","To format disks","To open ports"],0),
+M("Step 4: which commands create the images directory?",["sudo mkdir -p /home/partimag and chmod 755","mkdir /var/www","mkdir /srv/samba","chmod 777 /etc"],0),
+M("drblsrv -s does:",["Prepares /etc/drbl config, DHCP/DNS/TFTP/NFS templates, boot files, checks NFS/TFTP","Opens firewall","Installs Samba","Creates users"],0),
+M("Step 5 installs:",["bind9, bind9utils, dnsutils, resolvconf","samba","nginx","ufw only"],0),
+M("DNS utilities are used to:",["Test DNS and diagnose lookup problems","Host zones","Share files","Assign IPs"],0),
+M("named.conf.options sets forwarders to:",["8.8.8.8 and 1.1.1.1 with recursion yes","None","192.168.221.1","127.0.0.1"],0),
+M("Step 6 resolvconf head file lists:",["nameserver 127.0.0.1, 8.8.8.8, 1.1.1.1","Only 8.8.8.8","search domains","hosts"],0),
+M("Which command applies the resolvconf update?",["sudo resolvconf -u","sudo netplan apply","drblsrv -i","ufw enable"],0),
+M("Step 7 enables services:",["isc-dhcp-server, tftpd-hpa, named","smbd, nmbd","nginx, mysql","ssh, cron"],0),
+M("Why is a firewall needed on the Clonezilla server?",["It runs several network services; UFW allows only required ports","It makes disks faster","To store images","To clone"],0),
+T("UFW (Uncomplicated Firewall) is a simple front-end for firewall management on Ubuntu.",true),
+M("Ports 111 tcp/udp in the UFW step are for:",["RPC portmapper used with NFS","DNS","TFTP","SSH"],0),
+M("Port 53 is for:",["DNS","DHCP","TFTP","NFS"],0),
+M("Ports 67 and 68 udp are for:",["DHCP","DNS","NFS","SMB"],0),
+M("Port 69 udp is for:",["TFTP","DHCP","DNS","SSH"],0),
+M("Step 9 (Test) checks which?",["ping, nslookup, services status, ip addr show ens33, ls -la /home/partimag","smbclient","testparm","mkdir"],0),
+T("The three DRBL steps in order: drblsrv -i, drblsrv -s, drblpush -i.",true)]);
+X(5,[
+M("Process steps for the Windows client:",["Create/configure VM, PXE boot, restore image, clone data to server","Install Clonezilla, then Samba","Format, install LDAP","Compile kernel"],0),
+M("The client boots Clonezilla Live over the network and loads into:",["RAM","Local disk","USB","DVD"],0),
+M("Which file is edited to check the DHCP for PXE?",["/etc/dhcp/dhcpd.conf","/etc/samba/smb.conf","/etc/netplan","/etc/hosts"],0),
+M("The DRBL client class matches vendor-class identifier:",["PXEClient, Etherboot or DRBLClient","Windows only","Linux only","Samba"],0),
+M("Which pool statement allows DRBL clients an IP range?",["pool { allow members of DRBL-Client; range ...}","valid users","path","bond-mode"],0),
+M("Step 2 of configuring Windows client: dynamic IP means:",["Make sure the VM uses DHCP, ping the server, check its IP","Static IP only","No network","Host-only"],0),
+M("In the capture, Mode is:",["Start Clonezilla","Beginner","Expert only","Local"],0),
+M("Operation to choose:",["device-image (work with disks or partitions using images)","device-device","disk-copy","restore"],0),
+M("Mount point option:",["remote_server (the NFS share)","local_dev","ssh_server only","usb"],0),
+M("Network protocol selected:",["nfs with server 192.168.221.10, directory /home/partimag","smb","ftp","http"],0),
+M("Image name example:",["Win10-Pro-VMware-20241028","root","sda1","shared"],0),
+T("Clonezilla restore steps: PXE boot, restoredisk, select image, select target disk, confirm with y.",true),
+M("After restoration you must:",["Change the boot order back","Delete the image","Reinstall Windows","Disable DHCP"],0),
+M("Why couldn't the admin access data from Windows machines?",["Windows doesn't understand Linux NFS or ext4 directly","No cables","Wrong BIOS","No RAM"],0),
+M("The server used ... while lab computers used ...",["ext4 and Linux permissions; SMB/CIFS","NTFS; NFS","FAT32; SMB","XFS; iSCSI"],0),
+M("Samba's purpose:",["Provide file and print services to Windows clients using SMB/CIFS","Disk imaging","DNS hosting","Mail"],0),
+M("Samba makes a Linux directory look like:",["A Shared Folder on a Windows network","A RAID","A swap","A VM"],0),
+M("SMB communication phases begin with:",["Session setup over TCP port 445, then negotiation of dialect","File write","Logoff","Authentication only"],0),
+M("SMB phase order after negotiation:",["Authentication, resource connection, file operations, session termination","File ops, auth","Logoff, auth","None"],0),
+M("Traditionally SMB uses NetBIOS over TCP on port:",["139","445","22","80"],0),
+M("winbindd:",["Integrates Linux with Windows domain authentication","Name resolution","File sharing","Logs"],0),
+T("Samba has its own password database, separate from Linux login; users need a Linux account first.",true),
+T("SMB is a stateful protocol; the server maintains connection state.",true),
+M("Which is a key SMB/CIFS feature?",["File and printer sharing, user-level security, interoperability","Disk imaging","DNS","Booting"],0),
+M("smb.conf main sections:",["[global] and shares","[boot] and [swap]","[dns]","[nfs]"],0),
+M("Global section defines:",["Workgroup, security mode, server name, log file, max log size","Share path","Users list","Ports"],0),
+M("max log size specifies:",["Maximum size of log files before rotation","Log level","Log path","Users"],0),
+M("%I in log file names means:",["Client IP address","Username","Share name","Version"],0),
+M("%U means:",["Username","Client IP","Date","Hostname"],0),
+M("%S means:",["Share name","Samba version","Group","Time"],0),
+M("%T means:",["Current date/time","NetBIOS name","User","Share"],0),
+M("%N means:",["NetBIOS name","Client name","Group","Version"],0),
+M("%g means:",["Primary group of user","Hostname","Version","Time"],0),
+M("%h means:",["Samba server hostname","Client IP","User","Date"],0),
+M("%v means:",["Samba version","Share","User","Group"],0),
+M("security = share has:",["A password per share, very low security, not recommended","Per-user passwords","AD join","Domain controller"],0),
+M("security = domain:",["Authenticates against a Windows domain controller (member)","Per-share password","Local only","No auth"],0),
+M("security = ADS:",["Joins a Windows Active Directory domain as a native member","Share password","Old mode","Guest"],0),
+M("security = server is:",["Older mode, not recommended for modern use","Default","Highest security","AD mode"],0),
+M("Mandatory parameter in a share section:",["path (absolute directory path)","guest ok","browseable","read only"],0),
+M("Access-control parameters are:",["read only/writable, browseable, guest ok/public (yes/no)","path","workgroup","log file"],0),
+M("valid users vs invalid users:",["Who is allowed vs who is denied access","Read vs write","Both allow","Log vs path"],0),
+M("read list = user2 and write list = user1 means:",["user2 read-only, user1 can write","both write","both read-only","user1 denied"],0),
+M("Step 4 creates the share directory with:",["sudo mkdir -p /home/user/share1 then chmod 777","adduser","smbpasswd","ufw"],0),
+M("Step 5 creates a Linux user with:",["sudo adduser user1","smbpasswd -a only","mkdir","testparm"],0),
+M("Step 2 firewall command:",["sudo ufw allow samba","ufw deny samba","sudo smbd","iptables -F"],0),
+M("Step 3 check status command:",["sudo systemctl status smbd","testparm","smbclient","ufw status"],0),
+M("Step 1 installs Samba with:",["sudo apt update then sudo apt install samba","yum install","dpkg -r","snap remove"],0),
+M("Windows client test:",["File Explorer address bar: \\\\ubuntu_server_ip","ping only","Task manager","Registry"],0),
+M("Linux client test of share without password:",["smbclient //IP share1 -N","smbclient -U","mount nfs","ssh"],0),
+M("Linux client test with user:",["smbclient //IP share1 -U user1","smbclient -N","testparm","ufw"],0)]);
+
+// --- Vetted Additions: Lecture 1 (11 questions) ---
+X(0,[
+  M("What does a server provide?",["Services to users and other systems", "Only local graphical desktop interfaces", "Physical network cabling paths", "Direct electrical power distribution"],0),
+  M("What can a server store?",["Files and databases", "Only volatile CPU cache registers", "Physical network switches", "Analog telephone signals"],0),
+  M("What does performance monitoring check?",["CPU, memory, disk, and applications", "Room lighting and office temperature", "Employee attendance logs", "Graphic design timeline markers"],0),
+  M("Why are backups important?",["To restore data after failure", "To increase hard drive rotational speed", "To replace network firewalls", "To overclock server processors"],0),
+  M("What is disaster recovery mainly about?",["Restoring services after a failure", "Designing corporate brochures", "Purchasing additional office supplies", "Upgrading office furniture"],0),
+  M("Which is an example of a server service?",["Web server", "Graphic tablet driver", "Video editing timeline", "Sound card equalizer"],0),
+  M("Which technology manages storage across multiple disks?",["RAID", "DHCP", "DNS", "VLAN"],0),
+  M("What problem did performance monitoring help investigate in BloomTech?",["A slow CRM application", "A failing keyboard cable", "A flickering monitor screen", "An uncalibrated office printer"],0),
+  M("Which tool is listed for server diagnostics and process monitoring?",["htop", "Wireshark", "traceroute", "ping"],0),
+  M("What should students learn to match in server administration?",["Tools to specific server problems", "Network cable colors to desks", "Office monitor brands to graphics cards", "Printer toner types to paper sizes"],0),
+  M("What does tool interoperability mean?",["Different tools can work together", "Tools require identical hardware to boot", "Tools must run from a single USB drive", "Tools can only be written in C++"],0)
+]);
+
+// --- Vetted Additions: Lecture 2 (7 questions) ---
+X(1,[
+  M("What does a package manager help install?",["Software packages", "Hardware cooling fans", "Physical network switches", "BIOS firmware chips"],0),
+  M("What does RAID combine?",["Multiple disks into one array", "Multiple network cables into one switch", "Multiple CPU cores into one socket", "Multiple monitors into one display"],0),
+  M("What does LVM manage?",["Storage volumes flexibly", "Network IP routing tables", "User account passwords in LDAP", "DNS zone transfer records"],0),
+  M("What does PV mean in LVM?",["Physical Volume", "Packet Vector", "Private Virtualization", "Peripheral Volume"],0),
+  M("What does VG mean in LVM?",["Volume Group", "Virtual Gateway", "Virtual Graphic", "Vector Group"],0),
+  M("What does LV mean in LVM?",["Logical Volume", "Linked Variable", "Local Vector", "Linear Version"],0),
+  M("What is thin provisioning used for in LVM?",["Allocating storage capacity flexibly as needed", "Formatting partitions with FAT16", "Disabling drive write caching", "Permanently erasing bad sectors"],0)
+]);
+
+// --- Vetted Additions: Lecture 3 (14 questions) ---
+X(2,[
+  M("Which command lists block devices attached to the system?",["lsblk", "lspci", "lsusb", "lscpu"],0),
+  M("Which command displays active swap devices?",["swapon --show", "swapoff -a", "mkswap /dev/sda2", "free -g"],0),
+  M("How is the Linux file system organized?",["As a hierarchy starting at root (/)", "As flat unrelated folders on drive letters", "As circular linked lists in RAM", "As decentralized peer-to-peer hashes"],0),
+  M("What is the top directory in Linux?",["/", "C:\\", "/home", "/system"],0),
+  M("What does /boot contain?",["Files needed to start the system (kernel images, GRUB)", "User personal documents and downloads", "Website HTML and CSS files", "Database storage tables"],0),
+  M("What does /dev contain?",["Device files for hardware components", "Application source code files", "Operating system man pages", "System wallpaper graphics"],0),
+  M("Where are normal users' home directories stored?",["/home", "/etc/users", "/var/home", "/usr/local/bin"],0),
+  M("What does /root represent in Linux?",["The root user's home directory", "The root partition mount point", "The common shared folder for all users", "The temporary trash directory"],0),
+  M("What type of IP configuration is assigned statically to a server?",["Static IP", "APIPA auto-configuration (169.254.x.x)", "Dynamic IP assigned by public ISP DHCP", "Point-to-Point Protocol (PPP)"],0),
+  M("Which command loads the network bonding kernel module?",["modprobe bonding", "insmod bonding.ko --force", "systemctl start bonding", "netplan apply"],0),
+  M("What is the name of the example bonded interface in Ubuntu?",["bond0", "eth_combined", "trunk0", "lan_master"],0),
+  M("Which bonding mode sends packets sequentially across interfaces (round-robin)?",["balance-rr (mode 0)", "active-backup (mode 1)", "broadcast (mode 3)", "balance-alb (mode 6)"],0),
+  M("Which command tests network connectivity after bonding setup?",["ping -c 4 8.8.8.8", "traceroute localhost", "ip link set bond0 down", "systemctl restart systemd-resolved"],0),
+  T("The /boot directory stores personal files and documents for regular users.",false)
+]);
+
+// --- Vetted Additions: Lecture 4 (9 questions) ---
+X(3,[
+  M("What does imaging create in Clonezilla?",["A compressed image file of a disk or partition", "An executable Windows registry key", "A plaintext list of user passwords", "A raw SQL database query table"],0),
+  M("Where can Clonezilla images be stored centrally on a server?",["In a dedicated server directory (/home/partimag)", "Only on floppy diskettes", "Exclusively in the client's BIOS ROM", "Directly inside the router RAM"],0),
+  M("What is disaster recovery in the Clonezilla context?",["Restoring a complete system image after a crash", "Ordering new office chairs after a storm", "Re-running network cabling through ceilings", "Updating LinkedIn company profiles"],0),
+  M("What does centralized backup management provide?",["Keeping backups in one central, secure server location", "Saving backups on random employee USB thumb drives", "Leaving paper copies in filing cabinets", "Storing backups exclusively on mobile phones"],0),
+  M("What is mass deployment?",["Installing the same system image on many computers simultaneously", "Emailing a PDF handbook to all employees", "Buying identical computer monitor stands", "Configuring one router interface at a time"],0),
+  M("What can RAID redundancy provide for Clonezilla image storage?",["Protection against drive failure so images remain safe", "Permanent immunity to power outages", "10x faster internet download speeds", "Automatic deletion of outdated backups"],0),
+  M("Who should have controlled access to restore Clonezilla images?",["Authorized administrators only", "All external office visitors", "Unauthenticated guest Wi-Fi users", "Temporary contractors without accounts"],0),
+  M("What does the SEND operation do in Clonezilla?",["Saves a client disk image to server storage", "Deletes all backups on the server", "Sends print jobs to network printers", "Formats the client disk immediately"],0),
+  M("What does the RECEIVE operation do in Clonezilla?",["Restores a disk image from the server to the local drive", "Erases the server storage array", "Uploads the client hard drive to Google Drive", "Transfers files between two web servers"],0)
+]);
+
+// --- Vetted Additions: Lecture 5 (18 questions) ---
+X(4,[
+  M("How many main installation steps are listed for the Clonezilla server in the lecture?",["Nine steps", "Three steps", "Fifteen steps", "Twenty-four steps"],0),
+  M("Which command updates package repositories and upgrades installed packages on Ubuntu?",["sudo apt update && sudo apt upgrade -y", "sudo rm -rf /etc/apt", "sudo shutdown -r now", "apt-cache search linux-kernel"],0),
+  M("Which package provides traditional Linux networking tools such as ifconfig and route?",["net-tools", "sysstat", "nmap", "wireshark"],0),
+  M("What is curl used for?",["Transferring data to or from URLs via command line", "Managing Linux user group permissions", "Partitioning secondary NVMe drives", "Compiling Linux kernel modules"],0),
+  M("What does 'dhcp4: no' indicate in a Netplan configuration?",["Do not use DHCP; use a static IPv4 address", "Use DHCP exclusively for IPv4 and IPv6", "Disable all physical network cards", "Enable automatic Wi-Fi roaming"],0),
+  M("Which address is shown as the VMware NAT gateway in the lab design?",["192.168.122.2 (or 192.168.221.2)", "192.168.122.254", "10.0.0.2", "192.168.1.1"],0),
+  M("Which package provides low-level disk imaging support alongside Clonezilla?",["partclone", "gparted-server", "dd-advanced", "fdisk-pro"],0),
+  M("Which service configuration templates are prepared by 'sudo drblsrv -s'?",["DHCP, DNS, TFTP, and NFS", "HTTP, HTTPS, FTP, and SMTP", "SSH, Telnet, RDP, and VNC", "MySQL, PostgreSQL, MongoDB, and Redis"],0),
+  M("What does 'drblsrv -s' do with PXE boot files?",["Copies bootloader and PXE files to the TFTP root", "Erases all bootloader files from the server", "Uploads PXE files to public GitHub", "Compresses PXE files into rar archives"],0),
+  M("Which command installs BIND9 and DNS utilities on Ubuntu?",["sudo apt install -y bind9 bind9utils dnsutils resolvconf", "sudo apt install dns-complete", "sudo apt install bind-full-edition", "sudo apt get dns-server-ubuntu"],0),
+  M("Which configuration file is edited to configure BIND forwarders and options?",["/etc/bind/named.conf.options", "/etc/bind/bind.cfg", "/etc/dns/resolv.options", "/etc/named.conf.user"],0),
+  M("What is a DNS forwarder in BIND?",["A DNS server that forwards queries to external resolvers", "A hardware switch that filters DNS packets", "A firewall that blocks port 53", "A web proxy that caches images"],0),
+  M("What does 'recursion yes;' allow in a BIND DNS server?",["The server can perform recursive lookups for client queries", "The server rejects all non-local domain requests", "The server disables DNS caching completely", "The server operates only as an authoritative master"],0),
+  M("Which file is edited to add persistent DNS nameserver entries under resolvconf?",["/etc/resolvconf/resolv.conf.d/head", "/etc/resolv.conf.bak", "/etc/network/nameservers.conf", "/var/run/resolv.conf"],0),
+  M("Which UDP port is opened in UFW for TFTP boot services?",["69", "53", "80", "445"],0),
+  M("Which command displays the IP address and details of interface ens33?",["ip addr show ens33", "ifconfig ens33 --clear", "ping -I ens33", "route -n"],0),
+  T("The wget command is an interactive file downloader used for retrieving files from web servers.",false),
+  T("The Clonezilla server does not require DNS services for its operation.",false)
+]);
+
+// --- Vetted Additions: Lecture 6 (5 questions) ---
+X(5,[
+  M("Which command tests the network connection from client to Clonezilla server?",["ping 192.168.134.10 (or server IP)", "traceroute 127.0.0.1", "curl -X POST http://localhost", "telnet 192.168.134.10 21"],0),
+  M("What happens during SMB dialect negotiation?",["Client and server agree on which SMB protocol version to use", "Client formats its local hard drive", "Server assigns a new static IP to client", "User password is deleted permanently"],0),
+  M("What happens during SMB authentication?",["The client provides credentials to verify user identity", "The server displays its public web page", "The client requests a DHCP IP lease", "The server reboots to apply updates"],0),
+  M("Which TCP port is used for modern direct SMB communication without NetBIOS?",["445", "22", "80", "2049"],0),
+  M("Which TCP port is associated with legacy NetBIOS session services for Samba?",["139", "53", "67", "69"],0),
+T("Windows can natively understand and read Linux's NFS shares and ext4 filesystems without extra software.",false),
+T("The Samba security mode 'security = share' requires individual user accounts and credentials for each share access.",false),
+T("Samba uses TCP ports 139 (NetBIOS Session) and 445 (direct SMB) for network communication.",true),
+M("What does the acronym SMB stand for in server administration?",["Server Message Block", "System Management Bus", "Synchronized Memory Buffer", "Secure Multi-User Bridge"],0),
+M("What does the acronym CIFS stand for in network file sharing?",["Common Internet File System", "Centralized Information File Storage", "Computer Interface for Server Storage", "Clustered Internet File Standard"],0),
+M("What occurs during the SMB protocol dialect negotiation phase?",["The client and server agree on which SMB protocol version to use", "The server automatically generates a new user password", "All files in the share are cached into client RAM", "The network adapter is reassigned a dynamic IP"],0),
+M("What happens during the SMB authentication phase after dialect negotiation?",["The client provides its username and password credentials to verify access", "The server formats the storage drive with NTFS", "The DHCP server renews the client lease", "The firewall drops all TCP port 445 traffic"],0),
+M("In Samba's /etc/samba/smb.conf, what does the 'path' parameter specify under a share definition?",["The absolute Linux directory path being shared on the server", "The client's local IP address", "The path to the smbd daemon binary", "The remote domain controller hostname"],0),
+M("What happens to existing data on the client target disk during a Clonezilla image restoration ('restoredisk')?",["All existing partitions and data on the target disk are completely overwritten and erased", "Old data is preserved in /tmp/backup", "New data is merged alongside old files without changes", "Only empty unallocated sectors are populated"],0),
+M("What should be changed in the client BIOS/firmware settings after Clonezilla disk restoration is complete?",["Change the boot order back to the local hard drive", "Disable the CPU virtualization flags", "Reset the motherboard CMOS battery", "Change the RAM bus speed"],0)
+]);
+
+
+// --- Section 7: المقالي (Short Answers & Explanations) ---
+const E=(q,a)=>({q,a});
+L.push({
+  n: "المقالي",
+  s: "Short Answers & Explanations",
+  essay: true,
+  q: [
+    E("Compare Linux Server and Windows Server across four key criteria (Cost, Stability, Performance, and Package Management).", "1. Cost: Linux is open-source and free (no licensing fees); Windows requires expensive server licenses and Client Access Licenses (CALs).\n2. Stability & Reliability: Linux offers rock-solid uptime and rarely requires reboots (even during kernel/service updates); Windows frequently demands system restarts after updates.\n3. Performance & Efficiency: Linux is lightweight, highly optimized for headless CLI use, and consumes minimal CPU/RAM; Windows has higher resource overhead due to mandatory GUI subsystems.\n4. Package Management: Linux relies on centralized, scriptable package repositories (e.g., apt, yum, dnf); Windows traditionally depends on manual executable installers."),
+    E("List the core responsibilities of a Server Administrator.", "1. Installation & Configuration of server hardware, operating systems, and services.\n2. Performance Monitoring (CPU, RAM, disk I/O, network) and troubleshooting bottlenecks.\n3. Backup and Disaster Recovery planning, automation, and regular restoration testing.\n4. Patching & Security Updates for operating systems and critical applications.\n5. User and Access Management (creating accounts, groups, permissions, and directory integration).\n6. Storage and File System Management (RAID arrays, LVM volumes, disk quotas)."),
+    E("What are the main advantages of using LVM (Logical Volume Manager) over traditional disk partitioning?", "1. Flexible Capacity & Resizable Volumes: Dynamically expand or shrink logical volumes online without unmounting or reformatting disks.\n2. Storage Pooling (Volume Groups): Aggregate multiple physical disks/partitions into a single storage pool (VG).\n3. Online Data Migration: Move live data between physical volumes seamlessly without system downtime.\n4. Snapshots & Thin Provisioning: Create instant point-in-time volume snapshots for safe backups, and allocate virtual storage space on demand."),
+    E("What are the essential Linux commands used to inspect LVM components, swap space, and disk usage?", "• LVM Inspection:\n  - sudo pvs: Inspect Physical Volumes (size, free space, volume group assignment).\n  - sudo vgs: Inspect Volume Groups (total size, free space, number of PVs and LVs).\n  - sudo lvs: Inspect Logical Volumes (size, volume group, path, snapshot status).\n• Disk Usage & Block Devices:\n  - df -h: Show human-readable disk space usage on mounted filesystems.\n  - lsblk: Display block devices and partition hierarchy in a tree format.\n• Swap Status:\n  - sudo swapon --show (or free -h): Display active swap partitions/files and memory utilization."),
+    E("Explain the two main phases of network communication in Clonezilla Server during PXE boot and deployment.", "1. Boot Phase (PXE Boot):\n   • Client requests network configuration via DHCP -> DHCP server assigns a temporary IP and specifies the TFTP boot server IP.\n   • Client requests bootloader from TFTP -> TFTP serves pxelinux.0, kernel, and initrd.img to boot the client completely into RAM.\n2. Operation Phase (Cloning / Restoration):\n   • Client mounts the Clonezilla Live environment and disk image storage repository from the NFS server.\n   • Clonezilla executes the imaging script, reading from or writing to the server disk image storage over NFS."),
+    E("What are the primary purposes of creating disk images with Clonezilla, and what are the benefits of centralizing them on a server?", "• Primary Purposes:\n  1. Rapid Disaster Recovery: Fast bare-metal restoration of crashed systems without reinstalling OS and apps.\n  2. Mass Deployment: Deploying identical standardized operating systems across multiple machines simultaneously.\n  3. Hardware Migration: Upgrading or moving systems seamlessly between drives or physical machines.\n• Centralized Server Benefits:\n  - Automated & Scheduled Backups: Regular unattended image creation.\n  - Enhanced Security & Version Control: Managed access control permissions on images.\n  - Storage Redundancy: Storing images on fault-tolerant server RAID arrays.\n  - High Speed Mass Rollouts: Rapid multicast deployment over the local network via PXE."),
+    E("[Scenario] In a Clonezilla Server setup, clients can PXE boot and see the menu, but cannot access stored disk images on the server. Network connectivity is normal. Which service is misconfigured, and what are its two core roles?", "• Misconfigured Service: NFS (Network File System).\n• Two Core Roles in Clonezilla:\n  1. Shares and exports the central disk image storage directory across the network so PXE clients can read/write raw image files.\n  2. Serves and hosts the Clonezilla Live filesystem root and manages network file access permissions."),
+    E("[Scenario] An organization wants to deploy an identical OS setup to 30 new PCs simultaneously without manual installation, ensuring only authorized admins can restore images. What technologies and policies solve this?", "• Technologies: Clonezilla Server Edition (DRBL) configured in Multicast mode over PXE network boot (supported by DHCP, TFTP, and NFS), allowing a single broadcast stream to clone all 30 machines in parallel.\n• Security Policies: Storing images centrally on Ubuntu Server with strict access permissions (limiting restore rights to administrators only), utilizing RAID storage for redundancy, and establishing snapshot policies."),
+    E("[Scenario] Quick Decision Guide: Match the right technology to each requirement (RAID 6, XFS, Swap, NIC Bonding).", "• Surviving 2 simultaneous disk failures in a large array: RAID 6 (uses double distributed parity blocks).\n• High-throughput transactional database needing an optimal Linux filesystem: XFS (engineered for large files and high parallel I/O throughput).\n• Server running out of physical RAM during peak workloads: Swap space (pages out inactive memory pages to disk and enables system hibernation).\n• Preventing network downtime if a network cable or NIC fails: NIC Bonding in active-backup mode (mode 1)."),
+    E("Summarize the three DRBL setup commands used during Clonezilla Server installation and what each does.", "• sudo drblsrv -i: Installs DRBL core packages (drbl, nfs-kernel-server, tftp-hpa) and configures directory trees.\n• sudo drblsrv -s: Sets up DRBL system configuration templates under /etc/drbl/ for DHCP, DNS, TFTP, and NFS.\n• sudo drblpush -i: Probes active network interfaces, generates the client PXE boot environment, and starts/activates the DRBL server services."),
+    E("[Scenario] If DNS lookups fail even after configuring /etc/bind/named.conf.options, what step must be rechecked, and what does 'sudo resolvconf -u' do?", "• Step to Recheck: Step 6 — Persistent DNS configuration (verify /etc/resolvconf/resolv.conf.d/head and confirm the named / BIND9 service is enabled and running).\n• sudo resolvconf -u: Regenerates and dynamically updates the system DNS resolver file (/etc/resolv.conf) from the resolvconf configuration files."),
+    E("[Scenario] Why does Clonezilla require the client machine to use DHCP when booting via PXE?", "Because during a PXE network boot, the client has no operating system or network configuration loaded on its local hard drive. It relies entirely on DHCP to dynamically obtain a temporary IP address, subnet mask, gateway, and the TFTP boot server IP address to fetch bootloaders and kernel images."),
+    E("[Scenario] Why does Clonezilla separate 'savedisk' and 'restoredisk' into distinct commands instead of a single tool?", "To prevent catastrophic accidental data loss. 'savedisk' is a read-only capture operation from client to server (captures the disk non-destructively), whereas 'restoredisk' is a destructive write operation that completely wipes the client's destination drive. Separating them prevents administrators from unintentionally overwriting production disks."),
+    E("What is the purpose of 'sudo smbpasswd -a <username>', and how do you verify a Samba share from Windows and Linux clients?", "• smbpasswd -a <username>: Adds an existing local Linux user to Samba's independent credentials database (passdb.tdb) and sets their SMB password.\n• Windows Verification: Press Win+R, type \\\\<ubuntu_server_ip> (e.g., \\\\192.168.221.10), and enter login credentials.\n• Linux Verification: Run 'smbclient //<ubuntu_server_ip>/<share_name> -U <username>' in terminal."),
+    E("[Scenario] Analyze the relationship between Samba SMB ports (139 & 445) and firewall security. What risks arise if left open to the internet?", "• Ports 139 (NetBIOS Session Service) and 445 (direct SMB over TCP) expose core file and printer sharing protocols.\n• Internet Risk: If left exposed to the public internet, they become primary attack vectors for brute-force attacks, unauthenticated directory browsing, and lateral worm/ransomware propagation (such as WannaCry / EternalBlue). UFW firewalls must always restrict ports 139 and 445 to authorized local subnets only."),
+    E("What are the roles of the three primary Samba daemons: smbd, nmbd, and winbindd?", "• smbd: Manages file and print sharing services, handles SMB/CIFS protocol negotiations, and validates user authentication and access permissions.\n• nmbd: Handles NetBIOS name resolution, facilitates NetBIOS-over-IP, and enables local network browsing (Windows Network Neighborhood).\n• winbindd: Integrates Linux systems into a Windows Active Directory domain, allowing domain users and groups to authenticate on the Linux server."),
+    E("Explain the difference between Hard Links and Soft (Symbolic) Links in Linux file systems.", "• Hard Link: An additional directory entry pointing directly to the file's original inode on the same filesystem. Deleting the original file keeps the data intact as long as a hard link exists. Cannot span across different filesystems or link directories.\n• Soft (Symbolic) Link: A small pointer file containing the path string to another target file or directory. Can cross filesystem boundaries and link directories. If the target file is deleted or moved, the symbolic link breaks (dangling link)."),
+    E("Compare the seven RAID levels (0, 1, 5, 6, 10, 50, 60) regarding minimum disks, fault tolerance, and primary trade-offs.", "• RAID 0: Min 2 disks, Striping, 0 fault tolerance, highest speed, total capacity 100%.\n• RAID 1: Min 2 disks, Mirroring, survives 1 disk failure per pair, 50% capacity, high read speed, write overhead.\n• RAID 5: Min 3 disks, Distributed single parity, survives 1 disk failure, capacity (N-1), parity write penalty.\n• RAID 6: Min 4 disks, Distributed dual parity, survives 2 disk failures, capacity (N-2), excellent for large disk arrays (8+ disks).\n• RAID 10 (1+0): Min 4 disks, Mirrored stripes, survives 1 disk failure per mirror pair, 50% capacity, high performance & redundancy.\n• RAID 50/60: Min 6/8 disks, Striped RAID 5/6 sets, balances high capacity with fault tolerance for enterprise arrays."),
+    E("What are the key advantages of using RAID in server environments?", "• Higher Performance: Striping (RAID 0, 5, 6, 10) allows parallel read and write operations across multiple drive heads simultaneously.\n• Data Redundancy & Fault Tolerance: Mirroring and parity protect critical enterprise data from drive hardware failures without service disruption.\n• Capacity Aggregation: Combines multiple physical disks into a single large logical storage volume.\n• Extended Drive Lifespan: Distributes read/write I/O workloads evenly across the array, preventing premature drive burnout."),
+    E("[Scenario] System Administration Efficiency: An administrator spends hours manually downloading installers and updating software across Windows servers. How does Linux centralized package management solve this problem?", "• Linux Solution: Centralized Package Management (e.g., APT on Debian/Ubuntu, DNF/YUM on RHEL/Fedora).\n• Administrative Benefits:\n1. Automation & Scripting: A single command (e.g., 'sudo apt update && sudo apt upgrade -y') updates all operating system components and installed services unattended.\n2. Security & Integrity: Packages are cryptographically signed with GPG keys and fetched over authenticated channels from curated repositories, avoiding untrusted third-party executable installers.\n3. Automatic Dependency Resolution: Automatically identifies, downloads, and configures all prerequisite libraries, eliminating broken dependencies."),
+    E("What are the primary operational benefits of NIC bonding (network teaming) in enterprise servers?", "1. Redundancy & High Availability: If one physical network adapter, port, or cable fails, traffic instantly switches to the backup link (e.g., active-backup / Mode 1) without dropping active connections or user sessions.\n2. Bandwidth Aggregation (Load Balancing): Combines the bandwidth of multiple physical NICs into one logical high-throughput pipe (e.g., Mode 4 / IEEE 802.3ad LACP), eliminating network interface bottlenecks for busy file and database servers."),
+    E("Explain the primary roles and typical contents of the Linux /var directory.", "1. System & Service Logs (/var/log): Stores persistent logging information (e.g., /var/log/syslog, /var/log/auth.log, /var/log/samba/) crucial for auditing, monitoring, and debugging.\n2. Dynamic Application & Database Data (/var/lib): Houses runtime databases and state files (e.g., /var/lib/mysql, /var/lib/ldap).\n3. Web Server Content (/var/www): Default root directory for web files and virtual hosts.\n4. Spool & Mail Queues (/var/spool): Manages temporary queues for print jobs and outgoing mail daemons."),
+    E("[Scenario] Storage Architecture Selection: An administrator is configuring storage for a high-transaction enterprise database server processing large streaming media logs and multi-gigabyte sequential database tables. Should they choose Ext4 or XFS, and why?", "• Recommended Filesystem: XFS.\n• Technical Justification:\n1. High-Throughput & Parallel I/O: XFS uses Allocation Groups that allow multiple CPU cores and threads to perform concurrent read/write allocations simultaneously without filesystem-wide locks.\n2. Massive File & Volume Scalability: XFS handles multi-terabyte files and very large filesystems with virtually no performance degradation.\n3. Ext4 Trade-Off: While Ext4 is reliable and ideal for general OS root partitions and small files, its centralized metadata allocation creates bottlenecks under heavy, concurrent, large-scale database operations."),
+    E("[Scenario] Memory Management Strategy: During peak business hours, a server exhausts physical RAM, causing critical application crashes. How does configuring Swap space solve this issue without immediate hardware upgrades?", "• Solution: Configure Swap Space (Swap Partition or Swap File via 'mkswap' and 'swapon').\n• Protection Mechanism:\n1. Virtual Memory Paging: The Linux kernel continuously identifies idle, inactive memory pages and transfers them to swap on disk, freeing high-speed physical RAM for active processes.\n2. OOM Killer Prevention: Prevents the Linux Out-Of-Memory (OOM) killer from abruptly terminating essential database and application daemons when RAM reaches 100% capacity.\n3. Transient Spike Absorber: Absorbs unexpected memory allocation surges until administrator intervention or workload normalization."),
+    E("What are the main advantages of a centralized Clonezilla Server (DRBL) setup compared to standalone USB cloning?", "1. Multicast Mass Deployment: Deploys disk images to dozens or hundreds of client machines simultaneously across the local network without multiplying network bandwidth or deployment time.\n2. Centralized Image Repository: System images are safely archived and maintained on the server (/home/partimag), eliminating the maintenance, loss, and physical updating of dozens of USB flash drives.\n3. Zero Client Pre-installation: Bare-metal client machines boot directly over the network via PXE into RAM without requiring an installed operating system or software on the client."),
+    E("What is the function of the 'net-tools' package during Clonezilla Server installation and configuration?", "• Purpose of net-tools:\nInstalls foundational legacy networking utilities including 'ifconfig' (to inspect network interfaces and verify static IP/netmask bindings), 'netstat' (to audit active listening ports and established server sockets), 'route' (to inspect IP routing tables and default gateways), and 'arp' (to diagnose local hardware address mappings)."),
+    E("Explain the role and tasks performed by the 'drblsrv -s' command during DRBL installation.", "• Role of 'drblsrv -s':\nPrepares the server's network boot environment by downloading and configuring the client kernel, initramfs, and DRBL client-side packages. It stages the required boot files without yet modifying system services (DHCP/NFS/TFTP) on the host server until 'drblpush -i' is subsequently executed."),
+    E("Why is UFW (Uncomplicated Firewall) critical on the Clonezilla server, and which ports must be permitted?", "• Importance: UFW secures the server against unauthorized access while strictly permitting the specific network ports required for mass network deployment:\n• Permitted Ports:\n- DHCP: 67/udp (server), 68/udp (client)\n- TFTP: 69/udp (PXE boot file transfer)\n- DNS: 53/tcp & 53/udp (BIND domain resolution)\n- NFS: 2049/tcp & 2049/udp, plus rpcbind 111 (mounting image storage)\n- Samba: 139/tcp & 445/tcp (SMB file sharing)"),
+    E("[Scenario] Practical Deployment Script: If you were to automate the 'Test the Setup' stage after Clonezilla Server installation, which commands would you include and why?", "• Script Commands:\n1. ping -c 3 192.168.221.10: Verifies local TCP/IP stack and interface reachability.\n2. ip addr show ens33: Confirms the static IP address and netmask are correctly configured in Netplan.\n3. systemctl is-active bind9 isc-dhcp-server tftpd-hpa nfs-kernel-server: Verifies that all four core deployment daemons are in the 'active (running)' state.\n4. sudo ufw status: Confirms the firewall is active and that required ports (53, 67, 69, 2049) are properly allowed.\n5. ls -la /home/partimag: Confirms the image repository directory exists with correct read/write permissions."),
+    E("How does the client machine boot over the network using PXE in a Clonezilla deployment environment?", "1. Client BIOS/UEFI powers on and initializes the network interface with PXE enabled.\n2. DHCP Request: Client broadcasts a DHCP request; the Clonezilla DHCP server assigns an IP address and specifies the Next-Server (TFTP) IP and boot filename (pxelinux.0).\n3. TFTP Boot Transfer: Client downloads the bootloader (pxelinux.0), configuration menu, Linux kernel (vmlinuz), and initrd image into client RAM via TFTP.\n4. Clonezilla Live in RAM: The client boots the kernel entirely in RAM and mounts the Clonezilla image repository over NFS from the server to begin backup or restoration.")
+  ]
+});
+
+L.forEach(l => {
+  if (l.essay) return;
+  l.q.forEach(q => {
+    if (!q.tf && q.o) {
+      const c = q.o[q.a];
+      q.o.sort(() => Math.random() - .5);
+      q.a = q.o.indexOf(c);
+    }
+  });
+});
+
+document.getElementById("cnt").textContent = "7 أقسام · " + L.reduce((s, l) => s + l.q.length, 0) + " سؤال";
+const app = document.getElementById("app");
+let best = {};
+try { best = JSON.parse(localStorage.getItem("sa_best") || "{}"); } catch(e) {}
+const save = () => { try { localStorage.setItem("sa_best", JSON.stringify(best)); } catch(e) {} };
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+const icons = ["🚀", "💾", "🧭", "🧬", "🛰️", "🌉", "📝"];
+const acs = ["#23A095", "#4C8DD9", "#8A7BE0", "#E8954F", "#DB6A95", "#4DB57C", "#FF9F43", "#E8954F", "#DB6A95"];
+const RM = matchMedia("(prefers-reduced-motion:reduce)").matches;
+
+const ART = [
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"><rect x="60" y="14" width="80" height="22" rx="5"/><rect x="60" y="42" width="80" height="22" rx="5"/><rect x="60" y="70" width="80" height="22" rx="5"/></g><g fill="currentColor"><circle cx="74" cy="25" r="3"/><circle cx="74" cy="53" r="3"/><circle cx="74" cy="81" r="3"/><rect x="100" y="23" width="30" height="4" rx="2"/><rect x="100" y="51" width="30" height="4" rx="2"/><rect x="100" y="79" width="30" height="4" rx="2"/></g><path d="M20 100h160" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="30" r="10" fill="currentColor" opacity=".25"/><circle cx="170" cy="60" r="14" fill="currentColor" opacity=".18"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3"><path d="M30 30v48c0 7 14 12 25 12s25-5 25-12V30"/><ellipse cx="55" cy="30" rx="25" ry="9"/><path d="M120 30v48c0 7 14 12 25 12s25-5 25-12V30"/><ellipse cx="145" cy="30" rx="25" ry="9"/><path d="M85 55h30m-8-8l8 8-8 8" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="55" cy="58" r="4" fill="currentColor"/><circle cx="145" cy="58" r="4" fill="currentColor"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><rect x="82" y="10" width="36" height="20" rx="5"/><path d="M100 30v14M40 44h120M40 44v14M100 44v14M160 44v14"/><rect x="22" y="58" width="36" height="20" rx="5"/><rect x="82" y="58" width="36" height="20" rx="5"/><rect x="142" y="58" width="36" height="20" rx="5"/><path d="M40 78v10M160 78v10"/></g><circle cx="40" cy="94" r="5" fill="currentColor"/><circle cx="160" cy="94" r="5" fill="currentColor"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><rect x="20" y="26" width="52" height="40" rx="6"/><rect x="128" y="26" width="52" height="40" rx="6"/><path d="M46 66v10M34 78h24M154 66v10M142 78h24"/><path d="M82 46h36m-9-9l9 9-9 9"/></g><circle cx="46" cy="46" r="8" fill="currentColor" opacity=".3"/><circle cx="154" cy="46" r="8" fill="currentColor" opacity=".3"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="80" y="8" width="40" height="22" rx="5"/><path d="M100 30v14M36 44h128M36 44v12M100 44v12M164 44v12"/><rect x="20" y="56" width="32" height="22" rx="4"/><rect x="84" y="56" width="32" height="22" rx="4"/><rect x="148" y="56" width="32" height="22" rx="4"/><path d="M28 90h16M92 90h16M156 90h16"/></g><circle cx="92" cy="19" r="3" fill="currentColor"/><circle cx="104" cy="19" r="3" fill="currentColor" opacity=".5"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="40" width="44" height="34" rx="6"/><rect x="142" y="40" width="44" height="34" rx="6"/><path d="M58 52q42-34 84 0M58 64q42-14 84 0"/><path d="M36 82v8M164 82v8M24 92h24M152 92h24"/></g><rect x="86" y="44" width="28" height="22" rx="4" fill="currentColor" opacity=".3"/><circle cx="36" cy="57" r="5" fill="currentColor"/><path d="M156 50h12v14h-12z" fill="currentColor" opacity=".5"/></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="52" y="14" width="96" height="82" rx="8"/><line x1="72" y1="34" x2="128" y2="34"/><line x1="72" y1="50" x2="128" y2="50"/><line x1="72" y1="66" x2="108" y2="66"/><circle cx="138" cy="74" r="14" fill="currentColor" opacity=".2"/><path d="M130 80l16-12m-6 0l6 6"/></g></svg>',
+  '<svg viewBox="0 0 200 110"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M72 14h56v26c0 16-12 28-28 28S72 56 72 40z"/><path d="M72 22H52c0 16 8 24 22 26M128 22h20c0 16-8 24-22 26"/><path d="M100 68v14M80 94h40M88 82h24"/></g><path d="M100 24l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z" fill="currentColor" opacity=".5"/></svg>'
+];
+
+function confetti(x, y, n) {
+  const cs = ["#00FF9D", "#5ED6C1", "#23A095", "#1A2A4F", "#ffd166"];
+  for (let i = 0; i < n; i++) {
+    const d = document.createElement("i");
+    d.className = "fx";
+    d.style.background = cs[i % 5];
+    document.body.appendChild(d);
+    const a = Math.random() * 6.283, v = 80 + Math.random() * 170;
+    d.animate([
+      { transform: `translate(${x}px,${y}px) scale(1)`, opacity: 1 },
+      { transform: `translate(${x + Math.cos(a) * v}px,${y + Math.sin(a) * v + 90}px) rotate(${Math.random() * 540}deg) scale(.4)`, opacity: 0 }
+    ], { duration: 900 + Math.random() * 500, easing: "cubic-bezier(.2,.8,.3,1)" }).onfinish = () => d.remove();
+  }
+}
+
+let li, qi, log = [], wq = [], userAnswers = {};
+
+function home() {
+  app.style.removeProperty("--ac");
+  while (L.length > 7) L.pop();
+  
+  app.innerHTML = '<div class="grid">' + L.map((l, i) => {
+    const p = best[i] != null ? Math.round((best[i] / l.q.length) * 100) : 0;
+    return `<button class="lec" data-i="${i}" style="--ac:${acs[i] || "var(--primary)"};--d:${i * 80}ms">
+      <div class="art">${ART[i] || ""}</div>
+      <div class="ring" style="--p:${p}">
+        <div class="badge">${icons[i] || (i + 1)}</div>
+      </div>
+      <div>
+        <b>${l.n}</b>
+        <span>${esc(l.s)}</span>
+        <small>${l.q.length} سؤال${best[i] != null ? " · " + (l.essay ? "تمت مراجعتها" : "أفضل نتيجة " + best[i] + "/" + l.q.length) : ""}</small>
+        <i class="mini"><b style="width:${p}%"></b></i>
+      </div>
+    </button>`;
+  }).join("") + `
+    <button class="lec boss" id="boss" style="--ac:#E8954F;--d:640ms">
+      <div class="art">${ART[7]}</div>
+      <div class="ring" style="--p:100"><div class="badge">🏆</div></div>
+      <div>
+        <b>التحدي الشامل ⚡</b>
+        <span>Mixed Challenge</span>
+        <small>20 سؤال عشوائي من كل المحاضرات</small>
+      </div>
+    </button>
+  </div>`;
+  
+  app.querySelectorAll(".lec:not(.boss)").forEach(b => b.onclick = () => start(+b.dataset.i));
+  document.getElementById("boss").onclick = () => {
+    const pool = L.filter(l => !l.essay).flatMap(l => l.q).sort(() => Math.random() - .5).slice(0, 20);
+    L.push({ n: "التحدي الشامل", s: "Mixed Challenge", q: pool });
+    start(L.length - 1);
+  };
+  scrollTo(0, 0);
+}
+
+function start(i) {
+  li = i;
+  qi = 0;
+  log = [];
+  wq = [];
+  userAnswers = {};
+  show();
+}
+
+function renderStrip() {
+  const n = L[li].q.length;
+  let pills = "";
+  for (let idx = 0; idx < n; idx++) {
+    const isCur = (idx === qi);
+    const ans = userAnswers[idx];
+    let stateCls = "";
+    if (isCur) {
+      stateCls = "active";
+    }
+    if (ans && ans.answered) {
+      if (ans.correct) stateCls += " ok";
+      else if (ans.peeked) stateCls += " peeked";
+      else stateCls += " bad";
+    }
+    pills += `<button type="button" class="q-pill ${stateCls.trim()}" data-qi="${idx}" title="السؤال ${idx + 1}" aria-label="السؤال ${idx + 1}">${idx + 1}</button>`;
+  }
+  return `<div class="q-strip-wrap">
+    <div class="q-strip-header">
+      <span>شريط الأسئلة (السؤال ${qi + 1} من ${n})</span>
+      <div class="q-strip-legend">
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:#7a1f33"></i> الحالي</span>
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--ok)"></i> صحيح</span>
+        <span class="q-strip-legend-item"><i class="q-strip-legend-dot" style="background:var(--bad)"></i> خطأ</span>
+      </div>
+    </div>
+    <div class="q-strip" id="q-strip" role="tablist">${pills}</div>
+  </div>`;
+}
+
+function updateMidStats() {
+  const mid = app.querySelector(".mid");
+  if (!mid) return;
+  const n = L[li].q.length;
+  if (L[li].essay) {
+    mid.innerHTML = `<div class="qr" style="--p:${((qi + 1) / n) * 100}"><span>${qi + 1}</span></div><span class="sc">📖 بطاقة ${qi + 1}/${n}</span>`;
+    return;
+  }
+  const scoreVal = Object.values(userAnswers).filter(a => a && a.correct && !a.peeked).length;
+  const errCount = Object.values(userAnswers).filter(a => a && a.answered && !a.correct).length;
+  
+  // consecutive correct streak
+  let streak = 0;
+  for (let idx = qi; idx >= 0; idx--) {
+    const a = userAnswers[idx];
+    if (a && a.correct && !a.peeked) streak++;
+    else if (a && a.answered) break;
+  }
+  
+  mid.innerHTML = `
+    <div class="qr" style="--p:${((qi + 1) / n) * 100}"><span>${qi + 1}</span></div>
+    <span class="sc">⭐ ${scoreVal}</span>
+    ${errCount > 0 ? `<div class="qr er" title="أخطاء" style="--p:${(errCount / n) * 100}"><span>✕${errCount}</span></div>` : ""}
+    ${streak >= 2 ? `<span class="sc fire">🔥 ${streak}</span>` : ""}
+  `;
+}
+
+function show() {
+  const l = L[li], q = l.q[qi], n = l.q.length;
+  app.style.setProperty("--ac", acs[li] || "var(--primary)");
+
+  if (l.essay) {
+    const ans = userAnswers[qi];
+    const isRevealed = ans && ans.revealed;
+    app.innerHTML = `
+      <div class="bar">
+        <span class="tag">${l.n}</span>
+        <div class="mid"></div>
+        <button class="link" id="back">الرجوع للمحاضرات</button>
+      </div>
+      <div class="prog"><i style="width:${((qi + 1) / n) * 100}%"></i></div>
+      ${renderStrip()}
+      <div class="q">
+        <div class="kind">سؤال مقالي ${qi + 1} من ${n} · كروت استذكار 💡</div>
+        <h2 style="line-height:1.5;margin-bottom:18px;">${esc(q.q)}</h2>
+        <button class="btn" id="show-ans" style="margin:8px 0 14px;width:100%;font-size:16px;">${isRevealed ? "🙈 إخفاء الإجابة" : "👁️ إظهار الإجابة النموذجية"}</button>
+        <div id="ans-box" class="fb ok" style="display:${isRevealed ? "block" : "none"};margin:12px 0 20px;white-space:pre-wrap;text-align:left;direction:ltr;font-family:inherit;font-size:15px;line-height:1.6;border-right:none;border-left:4px solid var(--ac);padding:14px 16px;background:rgba(35,160,149,.08);">
+          <strong style="display:block;margin-bottom:8px;color:var(--text);direction:rtl;text-align:right;font-size:14px;">الإجابة النموذجية:</strong>
+          ${esc(q.a)}
+        </div>
+        <div class="q-nav">
+          <button type="button" class="btn alt" id="btn-prev" ${qi === 0 ? "disabled" : ""}>→ السؤال السابق</button>
+          <span class="q-nav-info">${qi + 1} / ${n}</span>
+          <button type="button" class="btn" id="btn-next">${qi === n - 1 ? "إنهاء المراجعة 🎉" : "السؤال التالي ←"}</button>
+        </div>
+      </div>`;
+
+    document.getElementById("back").onclick = home;
+    const showBtn = document.getElementById("show-ans");
+    const ansBox = document.getElementById("ans-box");
+    showBtn.onclick = () => {
+      const cur = ansBox.style.display === "block";
+      ansBox.style.display = cur ? "none" : "block";
+      showBtn.textContent = cur ? "👁️ إظهار الإجابة النموذجية" : "🙈 إخفاء الإجابة";
+      userAnswers[qi] = { answered: true, revealed: !cur, correct: true };
+      const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+      if (stripPill) {
+        stripPill.className = `q-pill active ${!cur ? "ok" : ""}`;
+      }
+    };
+    document.getElementById("btn-prev").onclick = navPrev;
+    document.getElementById("btn-next").onclick = () => {
+      if (qi < n - 1) { qi++; show(); }
+      else finishEssay();
+    };
+    document.querySelectorAll(".q-pill").forEach(pill => {
+      pill.onclick = () => {
+        const target = +pill.dataset.qi;
+        if (target !== qi) { qi = target; show(); }
+      };
+    });
+    updateMidStats();
+    const act = document.querySelector(".q-pill.active");
+    if (act) act.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    return;
+  }
+
+  // Regular multiple choice / true-false question
+  const ans = userAnswers[qi];
+  const isAnswered = ans && ans.answered;
+
+  app.innerHTML = `
+    <div class="bar">
+      <span class="tag">${l.n}</span>
+      <div class="mid"></div>
+      <button class="link" id="back">الرجوع للمحاضرات</button>
+    </div>
+    <div class="prog"><i style="width:${((qi + 1) / n) * 100}%"></i></div>
+    ${renderStrip()}
+    <div class="q">
+      <div class="q-card-head">
+        <div class="kind">سؤال ${qi + 1} من ${n} · ${q.tf ? "صح أم غلط" : "اختيار من متعدد"}</div>
+        <button type="button" class="btn-peek" id="btn-peek" ${isAnswered ? "disabled" : ""}>
+          ${isAnswered ? (ans.peeked ? "👁️ تم كشف الإجابة" : "✓ تم إرسال الإجابة") : "👁️ إظهار الإجابة"}
+        </button>
+      </div>
+      <h2>${esc(q.q)}</h2>
+      <div class="${q.tf ? "tf" : ""}" id="opts">
+        ${q.o.map((o, k) => `<button type="button" class="opt" data-k="${k}">${esc(o)}</button>`).join("")}
+      </div>
+      <div id="fb"></div>
+      <div class="q-nav">
+        <button type="button" class="btn alt" id="btn-prev" ${qi === 0 ? "disabled" : ""}>→ السؤال السابق</button>
+        <span class="q-nav-info">${qi + 1} / ${n}</span>
+        <button type="button" class="btn" id="btn-next">${qi === n - 1 ? "إنهاء الاختبار 🎉" : "السؤال التالي ←"}</button>
+      </div>
+    </div>`;
+
+  document.getElementById("back").onclick = home;
+  document.getElementById("btn-prev").onclick = navPrev;
+  document.getElementById("btn-next").onclick = navNext;
+
+  document.querySelectorAll(".q-pill").forEach(pill => {
+    pill.onclick = () => {
+      const target = +pill.dataset.qi;
+      if (target !== qi) { qi = target; show(); }
+    };
+  });
+
+  const bs = document.querySelectorAll(".opt");
+  if (isAnswered) {
+    bs.forEach((b, k) => {
+      b.disabled = true;
+      if (k === q.a) b.classList.add("ok");
+      else if (ans.selected !== null && k === ans.selected) b.classList.add("bad");
+    });
+    const fb = document.getElementById("fb");
+    if (ans.correct) {
+      fb.innerHTML = `<div class="fb ok" role="status">✓ إجابتك صح</div>`;
+    } else if (ans.peeked) {
+      fb.innerHTML = `<div class="fb ok" role="status">👁️ تم كشف الإجابة الصحيحة: <em>${esc(q.o[q.a])}</em></div>`;
+    } else {
+      fb.innerHTML = `<div class="fb bad" role="status">✗ إجابتك غلط<em>Correct answer: ${esc(q.o[q.a])}</em></div>`;
+    }
+  } else {
+    bs.forEach(b => b.onclick = () => pick(+b.dataset.k));
+    const btnPeek = document.getElementById("btn-peek");
+    if (btnPeek) btnPeek.onclick = peekAnswer;
+  }
+
+  updateMidStats();
+  const act = document.querySelector(".q-pill.active");
+  if (act) act.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+
+function pick(k) {
+  const q = L[li].q[qi];
+  if (userAnswers[qi]) return;
+  const good = (k === q.a);
+  userAnswers[qi] = { answered: true, selected: k, correct: good, peeked: false };
+  if (!good && !wq.some(item => item === q)) {
+    wq.push(q);
+    try { navigator.vibrate && navigator.vibrate(40); } catch(x) {}
+  }
+  
+  const bs = document.querySelectorAll(".opt");
+  bs.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.a) b.classList.add("ok");
+    else if (i === k) b.classList.add("bad");
+  });
+  
+  const fb = document.getElementById("fb");
+  if (fb) {
+    fb.innerHTML = `<div class="fb ${good ? "ok" : "bad"}" role="status">${
+      good ? "✓ إجابتك صح" : "✗ إجابتك غلط"
+    }${good ? "" : "<em>Correct answer: " + esc(q.o[q.a]) + "</em>"}</div>`;
+  }
+  
+  const btnPeek = document.getElementById("btn-peek");
+  if (btnPeek) {
+    btnPeek.disabled = true;
+    btnPeek.textContent = "✓ تم إرسال الإجابة";
+  }
+  
+  if (!RM && good) {
+    const r = document.querySelector(".opt.ok")?.getBoundingClientRect();
+    if (r) confetti(r.left + r.width / 2, r.top + r.height / 2, 26);
+  }
+  
+  const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+  if (stripPill) {
+    stripPill.className = `q-pill active ${good ? "ok" : "bad"}`;
+  }
+  
+  updateMidStats();
+}
+
+function peekAnswer() {
+  const q = L[li].q[qi];
+  if (userAnswers[qi]) return;
+  userAnswers[qi] = { answered: true, selected: null, correct: false, peeked: true };
+  if (!wq.some(item => item === q)) {
+    wq.push(q);
+  }
+  
+  const bs = document.querySelectorAll(".opt");
+  bs.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.a) b.classList.add("ok");
+  });
+  
+  const fb = document.getElementById("fb");
+  if (fb) {
+    fb.innerHTML = `<div class="fb ok" role="status">👁️ تم كشف الإجابة الصحيحة: <em>${esc(q.o[q.a])}</em></div>`;
+  }
+  
+  const btnPeek = document.getElementById("btn-peek");
+  if (btnPeek) {
+    btnPeek.disabled = true;
+    btnPeek.textContent = "👁️ تم كشف الإجابة";
+  }
+  
+  const stripPill = document.querySelector(`.q-pill[data-qi="${qi}"]`);
+  if (stripPill) {
+    stripPill.className = "q-pill active peeked";
+  }
+  
+  updateMidStats();
+}
+
+function navPrev() {
+  if (qi > 0) {
+    qi--;
+    show();
+  }
+}
+
+function navNext() {
+  const n = L[li].q.length;
+  if (qi < n - 1) {
+    qi++;
+    show();
+  } else {
+    if (L[li].essay) finishEssay();
+    else finish();
+  }
+}
+
+function finishEssay() {
+  const n = L[li].q.length;
+  best[li] = n;
+  save();
+  app.innerHTML = `<div class="res">
+    <div>أتممت مراجعة</div>
+    <div class="n" style="--p:100"><span>${n}/${n}</span></div>
+    <p>🎉 أحسنت! راجعت جميع الأسئلة المقالية ونماذج إجاباتها بالتفصيل.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn" id="re">أعد المراجعة</button>
+      <button class="btn alt" id="hm">كل الأقسام</button>
+    </div>
+  </div>`;
+  document.getElementById("re").onclick = () => start(li);
+  document.getElementById("hm").onclick = home;
+  scrollTo(0, 0);
+  if (!RM) {
+    for (let i = 0; i < 4; i++) setTimeout(() => confetti(innerWidth * (.2 + i * .2), innerHeight * .3, 30), i * 250);
+  }
+}
+
+function finish() {
+  const l = L[li], n = l.q.length;
+  const scoreVal = Object.values(userAnswers).filter(a => a && a.correct && !a.peeked).length;
+  if (best[li] == null || scoreVal > best[li]) {
+    best[li] = scoreVal;
+    save();
+  }
+  const pct = Math.round((scoreVal / n) * 100);
+  const wrongCount = n - scoreVal;
+  
+  const rk = pct >= 90 ? ["👑", "Root", "أسطورة السيرفرات"] :
+             pct >= 75 ? ["🛡️", "Sudoer", "أدمن محترف"] :
+             pct >= 50 ? ["🧑‍💻", "Admin Trainee", "أدمن تحت التدريب"] :
+                         ["👤", "Guest", "راجع وهتوصل"];
+                         
+  app.innerHTML = `<div class="res">
+    <div>نتيجتك في ${l.n}</div>
+    <div class="rank">${rk[0]} <b>${rk[1]}</b><small>${rk[2]}</small></div>
+    <div class="rings">
+      <figure>
+        <div class="n" style="--p:${pct}"><span>${scoreVal}/${n}</span></div>
+        <figcaption>✅ صح</figcaption>
+      </figure>
+      <figure>
+        <div class="n n2" style="--p:${Math.round((wrongCount / n) * 100)}"><span>${wrongCount}</span></div>
+        <figcaption>❌ أخطاء أو تخطي</figcaption>
+      </figure>
+    </div>
+    <p>${pct >= 80 ? "ممتاز! أنت متمكن من المحاضرة" : pct >= 50 ? "كويس، راجع الأسئلة الغلط تحت" : "محتاج تراجع المحاضرة وتحاول تاني"}</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="btn" id="re">أعد الاختبار</button>
+      ${wq.length ? `<button class="btn" id="rw">🔁 راجع الأخطاء فقط (${wq.length})</button>` : ""}
+      <button class="btn alt" id="hm">كل المحاضرات</button>
+    </div>
+    <div class="rev">
+      ${l.q.map((q, idx) => {
+        const a = userAnswers[idx];
+        const isGood = a && a.correct && !a.peeked;
+        const isSkipped = !a || !a.answered;
+        const isPeeked = a && a.peeked;
+        const tag = isGood ? "✓ إجابة صحيحة" : isSkipped ? "⏭️ تم التخطي" : isPeeked ? "👁️ تم كشف الإجابة" : "✗ إجابة خاطئة";
+        const cls = isGood ? "ok" : "bad";
+        return `<div class="${cls}">
+          <b>${idx + 1}. ${tag}</b>: ${esc(q.q)}
+          ${isGood ? "" : `<br><em style="display:inline-block;margin-top:6px;color:var(--text-sec)">الإجابة الصحيحة: ${esc(q.o[q.a])}</em>`}
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+  
+  document.getElementById("re").onclick = () => start(li);
+  document.getElementById("hm").onclick = home;
+  const rw = document.getElementById("rw");
+  if (rw && wq.length) {
+    rw.onclick = () => {
+      const qs = wq.slice();
+      L.push({ n: "مراجعة الأخطاء", s: "Review Mistakes", q: qs });
+      start(L.length - 1);
+    };
+  }
+  scrollTo(0, 0);
+  if (!RM && pct >= 80) {
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => confetti(innerWidth * (0.2 + i * 0.2), innerHeight * 0.3, 30), i * 250);
+    }
+  }
+}
+
+// Global Keyboard Arrow Navigation (RTL: ArrowRight = Previous, ArrowLeft = Next)
+window.addEventListener("keydown", (e) => {
+  if (li === undefined || !document.querySelector(".q")) return;
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    navPrev();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    navNext();
+  }
+});
+
+// Mobile Touch Swipe Navigation (RTL: swipe right = Previous, swipe left = Next)
+let touchStartX = 0, touchStartY = 0;
+window.addEventListener("touchstart", (e) => {
+  if (e.touches && e.touches.length === 1) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener("touchend", (e) => {
+  if (!touchStartX || !e.changedTouches || e.changedTouches.length === 0) return;
+  if (li === undefined || !document.querySelector(".q")) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  touchStartX = 0;
+  touchStartY = 0;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    if (dx > 0) {
+      navPrev();
+    } else {
+      navNext();
+    }
+  }
+}, { passive: true });
+
+// Initial render
+home();
+
+// Theme Toggle Engine
+(function() {
+  const tgl = document.getElementById("tgl");
+  if (tgl) {
+    tgl.onclick = () => {
+      const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", cur);
+      try { localStorage.setItem("sa_theme", cur); } catch(e){}
+    };
+  }
+})();
+
+</script>
+</body>
+</html>
